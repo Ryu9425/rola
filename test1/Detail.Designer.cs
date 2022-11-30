@@ -411,7 +411,7 @@
             this.dataGridView.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
             this.dataGridView.RowTemplate.Height = 25;
             this.dataGridView.ScrollBars = System.Windows.Forms.ScrollBars.None;
-            this.dataGridView.Size = new System.Drawing.Size(904, 430);
+            this.dataGridView.Size = new System.Drawing.Size(904, 480);
             this.dataGridView.TabIndex = 20;
             // 
             // groupBox1

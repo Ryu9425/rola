@@ -74,8 +74,10 @@ namespace test1
             GettingFromDB();
 
             total_items_count = display_item_list.Count;
+            current_page_group=1;
+            current_page_index=1;
 
-            ChangePaginating(1);
+            ChangePaginating(current_page_index);
             Paginator_Buttons_Control();
 
             // for (int i = 0; i < total_items_count; i++)
@@ -351,31 +353,31 @@ namespace test1
 
         private void btn_1_Click(object sender, EventArgs e)
         {
-            current_page_index = 5 * current_page_group + 1;
+            current_page_index = 5 * (current_page_group-1) + 1;
             ChangePaginating(current_page_index);
         }
 
         private void btn_2_Click(object sender, EventArgs e)
         {
-            current_page_index = 5 * current_page_group + 2;
+            current_page_index = 5 *  (current_page_group-1)  + 2;
             ChangePaginating(current_page_index);
         }
 
         private void btn_3_Click(object sender, EventArgs e)
         {
-            current_page_index = 5 * current_page_group + 3;
+            current_page_index = 5 *  (current_page_group-1)  + 3;
             ChangePaginating(current_page_index);
         }
 
         private void btn_4_Click(object sender, EventArgs e)
         {
-            current_page_index = 5 * current_page_group + 4;
+            current_page_index = 5 *  (current_page_group-1)  + 4;
             ChangePaginating(current_page_index);
         }
 
         private void btn_5_Click(object sender, EventArgs e)
         {
-            current_page_index = 5 * current_page_group + 5;
+            current_page_index = 5 *  (current_page_group-1)  + 5;
             ChangePaginating(current_page_index);
         }
     }
