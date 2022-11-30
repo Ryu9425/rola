@@ -19,146 +19,79 @@ using System.Data.SQLite;
 using Org.BouncyCastle.Utilities.Collections;
 
 namespace test1
-{
-  /*  public class Item
-    {
-        public string sensorid { set; get; }
-        public string uuid { set; get; }
-        public string data_id { set; get; }
-        public string data { set; get; }
-        public string datetime { set; get; }
-    }*/
+{      
     public partial class Detail : Form
     {
         string[] itemLists = { "傾斜", "気温", "湿度", "雨量", "風速", "風向", "水位" };
+
+        List<DisplayItem> display_item_list = new List<DisplayItem>();
+        
         public bool is_initing = false;
+        public DataTable dt;
         public Detail()
         {
             InitializeComponent();
-            Debug.Print("print...");
-        //    wepDataIniting();
-            combos_initing();
-            addDataTable();
+            Combos_Initing();
+            AddDataTableIniting(); 
+            AddDataTableContaining();           
         }
 
-        public async void wepDataIniting()
-        {
-            HttpClient client = new HttpClient();
-            using StringContent jsonContent = new(
-                JsonSerializer.Serialize(new
-                {
-                    module = "uck9JBnekzPe",
-                    datetime = "2022-11-26 23:24:00"
-                }),
-                Encoding.UTF8,
-                "application/json");
-            using HttpResponseMessage response = await client.PostAsync("https://collapse.sakura.ne.jp/getstream.php", jsonContent);
-
-            response.EnsureSuccessStatusCode();
-
-            var jsonResponse = await response.Content.ReadAsStringAsync();
-
-            Item[] items = JsonSerializer.Deserialize<Item[]>(jsonResponse);
-
-            if (items != null)
-            {
-                SQLiteConnection m_dbConnection;
-                var connection_path = "Data Source=" + Path.Combine(Directory.GetCurrentDirectory(), "rola.db");
-                m_dbConnection = new SQLiteConnection(connection_path);
-
-                MessageBox.Show(connection_path);
-
-                
-                try
-                {
-                    m_dbConnection.Open();
-
-                    foreach (var item in items){
-                      /*  var cmd = m_dbConnection.CreateCommand();                            
-                        string check_sql = "SELECT COUNT('sensorid') FROM sensors WHERE sensorid='" + item.sensorid + "'";
-                        cmd.CommandText = check_sql;
-
-                        var exist_status_reader = cmd.ExecuteReader();
-                        while (exist_status_reader.Read())
-                        {
-                            int myreader = exist_status_reader.GetInt32(0);
-                            if(myreader == 0)
-                            {*/
-                                var insert_cmd = m_dbConnection.CreateCommand();
-                                string inser_sql = "INSERT INTO sensors('sensorid','uuid','data_id','data','datetime') VALUES('" + item.sensorid + "', '"
-                                    + item.uuid + "', '" + item.data_id + "','" + item.data + "', '" + item.datetime + "')";
-                                insert_cmd.CommandText = inser_sql;
-                                insert_cmd.ExecuteNonQuery(); 
-                       /*     }
-                        } */
-                    }
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show(ex.Message);
-                }                   
-                
-
-                m_dbConnection.Close();
-            }
-
-            Debug.Print(jsonResponse);
-
-            return;
-        }
-
-        public void addDataTable()
-        {
-            int row_count = 15;
-
-            DataTable dt = new DataTable();
+        public void AddDataTableIniting()
+        {           
+            dt = new DataTable();
             dt.Columns.Add("登録日", typeof(string));
             dt.Columns.Add("気温", typeof(string));
             dt.Columns.Add("湿度", typeof(string));
             dt.Columns.Add("気圧", typeof(string));
             dt.Columns.Add("傾斜角度", typeof(string));
-
-
-            for (int i = 0; i < row_count; i++)
-            {
-                dt.Rows.Add(create_row_obj(i));
-            }
+            dt.Columns.Add("電池電圧", typeof(string));
 
             dataGridView.DataSource = dt;
             dataGridView.RowHeadersVisible = false;
-            dataGridView.Columns[0].ReadOnly = true;
+          //  dataGridView.Columns[0].ReadOnly = true;
             dataGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dataGridView.AllowUserToAddRows = false;
-            dataGridView.ScrollBars = ScrollBars.None;
-            dataGridView.Columns[0].SortMode = DataGridViewColumnSortMode.NotSortable;
-            dataGridView.Columns[1].SortMode = DataGridViewColumnSortMode.NotSortable;
-
+            dataGridView.ScrollBars = ScrollBars.Both;         
+          //  dataGridView.Columns[0].SortMode = DataGridViewColumnSortMode.NotSortable;
+          //  dataGridView.Columns[1].SortMode = DataGridViewColumnSortMode.NotSortable; 
+            dataGridView.Columns[0].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
             dataGridView.ColumnHeadersHeight = 50;
-
-            dataGridView.Height = dataGridView.ColumnHeadersHeight + dataGridView.RowTemplate.Height * row_count;
-            dataGridView.DefaultCellStyle.Font = new Font("Arial", 13);
-
-
-            for (int i = 0; i < 5; i++)
+            for (int i = 0; i < 6; i++)
             {
                 dataGridView.Columns[i].HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
                 dataGridView.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
             }
         }
 
+         public void AddDataTableContaining()
+        {
+            dt.Clear();
+            GettingFromDB();
+            int row_count = display_item_list.Count;
+
+            for (int i = 0; i < display_item_list.Count; i++)
+            {
+                dt.Rows.Add(create_row_obj(i));
+            }
+           // dataGridView.Height = dataGridView.ColumnHeadersHeight + dataGridView.RowTemplate.Height * (row_count-1);
+            dataGridView.DefaultCellStyle.Font = new Font("Arial", 13);  
+        }
+
         public object[] create_row_obj(int row_number)
         {
-            object[] objs = new object[5];
-
-            for (int i = 0; i < 5; i++)
-            {
-                objs[i] = false;
-            }
+            object[] objs = new object[6];
+            objs[0]=display_item_list[row_number].datetime;
+            objs[1]=display_item_list[row_number].temperature;
+            objs[2]=display_item_list[row_number].humidity;
+            objs[3]=display_item_list[row_number].pressure;
+            objs[4]=display_item_list[row_number].gradient;
+            objs[5]=display_item_list[row_number].voltage;
+            
             return objs;
         }
 
 
-        private void combos_initing()
+        private void Combos_Initing()
         {
             for (int i = 2020; i < 2099; i++)
             {
@@ -181,12 +114,12 @@ namespace test1
             fromDComboBox.Text = date.Day.ToString();
             toDComboBox.Text = date.Day.ToString();
 
-            add_fromday_combo();
-            add_today_combo();
+            Add_fromday_combo();
+            Add_today_combo();
             is_initing = true;
         }
 
-        public void add_fromday_combo()
+        public void Add_fromday_combo()
         {
 
             fromDComboBox.Items.Clear();
@@ -212,7 +145,7 @@ namespace test1
                 fromDComboBox.Items.Add(i.ToString());
             }
         }
-        public void add_today_combo()
+        public void Add_today_combo()
         {
             toDComboBox.Items.Clear();
             int year = Convert.ToInt32(toYComboBox.Text);
@@ -227,39 +160,87 @@ namespace test1
             }
         }
 
-        private void fromYComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        private void FromYComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (is_initing) add_fromday_combo();
+            if (is_initing) Add_fromday_combo();
         }
 
-        private void fromMComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        private void FromMComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (is_initing) add_fromday_combo();
+            if (is_initing) Add_fromday_combo();
         }
 
-        private void fromDComboBox_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            //filtering...
-        }
-
-        private void toYComboBox_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (is_initing) add_today_combo();
-        }
-
-        private void toMComboBox_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (is_initing) add_today_combo();
-        }
-
-        private void toDComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        private void FromDComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             //filtering...
         }
 
-        private void searchButton_Click(object sender, EventArgs e)
+        private void ToYComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (is_initing) Add_today_combo();
+        }
+
+        private void ToMComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (is_initing) Add_today_combo();
+        }
+
+        private void ToDComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            //filtering...
+           
+        }
+
+        private void SearchButton_Click(object sender, EventArgs e)
         {
             //searching....
+            AddDataTableContaining();
+        }
+
+        private void GettingFromDB(){
+
+            string from_date = fromYComboBox.Text+"-"+fromMComboBox.Text+"-"+fromDComboBox.Text;
+            string to_date = toYComboBox.Text+"-"+toMComboBox.Text+"-"+toDComboBox.Text;
+
+            SQLiteConnection m_dbConnection;
+            var connection_path = "Data Source=" + Path.Combine(Directory.GetCurrentDirectory(), "rola.db");
+            m_dbConnection = new SQLiteConnection(connection_path);
+
+            try
+            {
+                m_dbConnection.Open();
+                
+                var cmd = m_dbConnection.CreateCommand();                            
+                string get_display_sql = "SELECT *FROM display WHERE datetime>'"+from_date
+                +" 00:00:00' AND datetime<'"+to_date+" 24:00:00'";
+
+                //get_display_sql = "SELECT *FROM display WHERE datetime>'2022-11-29 00:00:00' AND datetime<='2022-11-29 24:00:00'";
+                
+                cmd.CommandText = get_display_sql;
+
+                var display_data_reader = cmd.ExecuteReader();
+
+                display_item_list.Clear();
+
+                while (display_data_reader.Read())
+                {
+                    DisplayItem item = new DisplayItem();
+                    item.temperature = display_data_reader.GetString(1); 
+                    item.humidity = display_data_reader.GetString(2); 
+                    item.voltage = display_data_reader.GetString(3); 
+                    item.pressure = display_data_reader.GetString(4); 
+                    item.gradient = display_data_reader.GetString(5); 
+                    item.uuid = display_data_reader.GetString(6); 
+                    item.datetime = display_data_reader.GetString(7);   
+                    display_item_list.Add(item);              
+                }                 
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+
+            m_dbConnection.Close();
         }
     }
 }

@@ -1680,11 +1680,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\LHJ\\Videos\\c#\\test1\\lora_shap\\test1\\test1.csproj",
+      "projectUniqueName": "F:\\rola\\test1\\test1.csproj",
       "projectName": "test1",
-      "projectPath": "C:\\Users\\LHJ\\Videos\\c#\\test1\\lora_shap\\test1\\test1.csproj",
+      "projectPath": "F:\\rola\\test1\\test1.csproj",
       "packagesPath": "C:\\Users\\LHJ\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\LHJ\\Videos\\c#\\test1\\lora_shap\\test1\\obj\\",
+      "outputPath": "F:\\rola\\test1\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

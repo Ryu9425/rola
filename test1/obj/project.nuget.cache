@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "03aa/6DT4y44NLmtzh49MQXFnJhxxJSQyLp7fXqxrCX9hkLjYDYm4up9ZwxdjQP7e38RnCZP80M8g1AKL/3bQQ==",
+  "dgSpecHash": "wBJX1AIkXjP1Dhcc4fKcbCIKD1LMg5Do768lRr2MTAEkqk6CZpDXfAUbgIPSnYSxB8Vpco5/TrTcwOcG/tekuQ==",
   "success": true,
-  "projectFilePath": "C:\\Users\\LHJ\\Videos\\c#\\test1\\lora_shap\\test1\\test1.csproj",
+  "projectFilePath": "F:\\rola\\test1\\test1.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\LHJ\\.nuget\\packages\\entityframework\\6.4.4\\entityframework.6.4.4.nupkg.sha512",
     "C:\\Users\\LHJ\\.nuget\\packages\\google.protobuf\\3.19.4\\google.protobuf.3.19.4.nupkg.sha512",

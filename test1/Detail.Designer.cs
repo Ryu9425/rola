@@ -77,7 +77,7 @@
             this.flowLayoutPanel1.Controls.Add(this.textBox5);
             this.flowLayoutPanel1.Controls.Add(this.textBox6);
             this.flowLayoutPanel1.Font = new System.Drawing.Font("Segoe UI", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.flowLayoutPanel1.Location = new System.Drawing.Point(63, 39);
+            this.flowLayoutPanel1.Location = new System.Drawing.Point(102, 39);
             this.flowLayoutPanel1.Margin = new System.Windows.Forms.Padding(0);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
             this.flowLayoutPanel1.Size = new System.Drawing.Size(721, 38);
@@ -144,7 +144,7 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(57, 118);
+            this.button1.Location = new System.Drawing.Point(96, 118);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(105, 26);
             this.button1.TabIndex = 2;
@@ -155,20 +155,20 @@
             // 
             this.searchButton.BackColor = System.Drawing.Color.DodgerBlue;
             this.searchButton.ForeColor = System.Drawing.SystemColors.HighlightText;
-            this.searchButton.Location = new System.Drawing.Point(722, 110);
+            this.searchButton.Location = new System.Drawing.Point(761, 110);
             this.searchButton.Margin = new System.Windows.Forms.Padding(0);
             this.searchButton.Name = "searchButton";
             this.searchButton.Size = new System.Drawing.Size(62, 41);
             this.searchButton.TabIndex = 3;
             this.searchButton.Text = "検索";
             this.searchButton.UseVisualStyleBackColor = false;
-            this.searchButton.Click += new System.EventHandler(this.searchButton_Click);
+            this.searchButton.Click += new System.EventHandler(this.SearchButton_Click);
             // 
             // label1
             // 
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.label1.Location = new System.Drawing.Point(177, 120);
+            this.label1.Location = new System.Drawing.Point(216, 120);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(61, 21);
             this.label1.TabIndex = 4;
@@ -179,7 +179,7 @@
             this.label2.AutoSize = true;
             this.label2.BackColor = System.Drawing.Color.DodgerBlue;
             this.label2.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
-            this.label2.Location = new System.Drawing.Point(421, 108);
+            this.label2.Location = new System.Drawing.Point(460, 108);
             this.label2.MinimumSize = new System.Drawing.Size(45, 0);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(45, 15);
@@ -191,7 +191,7 @@
             this.label3.AutoSize = true;
             this.label3.BackColor = System.Drawing.Color.DodgerBlue;
             this.label3.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
-            this.label3.Location = new System.Drawing.Point(421, 132);
+            this.label3.Location = new System.Drawing.Point(460, 132);
             this.label3.MinimumSize = new System.Drawing.Size(45, 0);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(45, 15);
@@ -203,7 +203,7 @@
             this.label4.AutoSize = true;
             this.label4.BackColor = System.Drawing.Color.DodgerBlue;
             this.label4.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
-            this.label4.Location = new System.Drawing.Point(674, 132);
+            this.label4.Location = new System.Drawing.Point(713, 132);
             this.label4.MinimumSize = new System.Drawing.Size(45, 0);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(45, 15);
@@ -215,7 +215,7 @@
             this.label5.AutoSize = true;
             this.label5.BackColor = System.Drawing.Color.DodgerBlue;
             this.label5.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
-            this.label5.Location = new System.Drawing.Point(674, 108);
+            this.label5.Location = new System.Drawing.Point(713, 108);
             this.label5.MinimumSize = new System.Drawing.Size(45, 0);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(45, 15);
@@ -226,17 +226,17 @@
             // 
             this.fromYComboBox.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.fromYComboBox.FormattingEnabled = true;
-            this.fromYComboBox.Location = new System.Drawing.Point(239, 118);
+            this.fromYComboBox.Location = new System.Drawing.Point(278, 118);
             this.fromYComboBox.Name = "fromYComboBox";
             this.fromYComboBox.Size = new System.Drawing.Size(64, 28);
             this.fromYComboBox.TabIndex = 9;
-            this.fromYComboBox.SelectedIndexChanged += new System.EventHandler(this.fromYComboBox_SelectedIndexChanged);
+            this.fromYComboBox.SelectedIndexChanged += new System.EventHandler(this.FromYComboBox_SelectedIndexChanged);
             // 
             // label6
             // 
             this.label6.AutoSize = true;
             this.label6.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.label6.Location = new System.Drawing.Point(305, 118);
+            this.label6.Location = new System.Drawing.Point(344, 118);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(16, 21);
             this.label6.TabIndex = 10;
@@ -246,27 +246,27 @@
             // 
             this.fromMComboBox.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.fromMComboBox.FormattingEnabled = true;
-            this.fromMComboBox.Location = new System.Drawing.Point(318, 119);
+            this.fromMComboBox.Location = new System.Drawing.Point(357, 119);
             this.fromMComboBox.Name = "fromMComboBox";
             this.fromMComboBox.Size = new System.Drawing.Size(40, 28);
             this.fromMComboBox.TabIndex = 11;
-            this.fromMComboBox.SelectedIndexChanged += new System.EventHandler(this.fromMComboBox_SelectedIndexChanged);
+            this.fromMComboBox.SelectedIndexChanged += new System.EventHandler(this.FromMComboBox_SelectedIndexChanged);
             // 
             // fromDComboBox
             // 
             this.fromDComboBox.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.fromDComboBox.FormattingEnabled = true;
-            this.fromDComboBox.Location = new System.Drawing.Point(377, 120);
+            this.fromDComboBox.Location = new System.Drawing.Point(416, 120);
             this.fromDComboBox.Name = "fromDComboBox";
             this.fromDComboBox.Size = new System.Drawing.Size(40, 28);
             this.fromDComboBox.TabIndex = 13;
-            this.fromDComboBox.SelectedIndexChanged += new System.EventHandler(this.fromDComboBox_SelectedIndexChanged);
+            this.fromDComboBox.SelectedIndexChanged += new System.EventHandler(this.FromDComboBox_SelectedIndexChanged);
             // 
             // label7
             // 
             this.label7.AutoSize = true;
             this.label7.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.label7.Location = new System.Drawing.Point(362, 119);
+            this.label7.Location = new System.Drawing.Point(401, 119);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(16, 21);
             this.label7.TabIndex = 12;
@@ -276,7 +276,7 @@
             // 
             this.label8.AutoSize = true;
             this.label8.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.label8.Location = new System.Drawing.Point(470, 119);
+            this.label8.Location = new System.Drawing.Point(509, 119);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(21, 21);
             this.label8.TabIndex = 14;
@@ -286,17 +286,17 @@
             // 
             this.toDComboBox.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.toDComboBox.FormattingEnabled = true;
-            this.toDComboBox.Location = new System.Drawing.Point(627, 119);
+            this.toDComboBox.Location = new System.Drawing.Point(666, 119);
             this.toDComboBox.Name = "toDComboBox";
             this.toDComboBox.Size = new System.Drawing.Size(40, 28);
             this.toDComboBox.TabIndex = 19;
-            this.toDComboBox.SelectedIndexChanged += new System.EventHandler(this.toDComboBox_SelectedIndexChanged);
+            this.toDComboBox.SelectedIndexChanged += new System.EventHandler(this.ToDComboBox_SelectedIndexChanged);
             // 
             // label9
             // 
             this.label9.AutoSize = true;
             this.label9.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.label9.Location = new System.Drawing.Point(613, 120);
+            this.label9.Location = new System.Drawing.Point(652, 120);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(16, 21);
             this.label9.TabIndex = 18;
@@ -306,17 +306,17 @@
             // 
             this.toMComboBox.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.toMComboBox.FormattingEnabled = true;
-            this.toMComboBox.Location = new System.Drawing.Point(570, 118);
+            this.toMComboBox.Location = new System.Drawing.Point(609, 118);
             this.toMComboBox.Name = "toMComboBox";
             this.toMComboBox.Size = new System.Drawing.Size(40, 28);
             this.toMComboBox.TabIndex = 17;
-            this.toMComboBox.SelectedIndexChanged += new System.EventHandler(this.toMComboBox_SelectedIndexChanged);
+            this.toMComboBox.SelectedIndexChanged += new System.EventHandler(this.ToMComboBox_SelectedIndexChanged);
             // 
             // label10
             // 
             this.label10.AutoSize = true;
             this.label10.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.label10.Location = new System.Drawing.Point(557, 121);
+            this.label10.Location = new System.Drawing.Point(596, 121);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(16, 21);
             this.label10.TabIndex = 16;
@@ -326,11 +326,11 @@
             // 
             this.toYComboBox.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.toYComboBox.FormattingEnabled = true;
-            this.toYComboBox.Location = new System.Drawing.Point(491, 118);
+            this.toYComboBox.Location = new System.Drawing.Point(530, 118);
             this.toYComboBox.Name = "toYComboBox";
             this.toYComboBox.Size = new System.Drawing.Size(64, 28);
             this.toYComboBox.TabIndex = 15;
-            this.toYComboBox.SelectedIndexChanged += new System.EventHandler(this.toYComboBox_SelectedIndexChanged);
+            this.toYComboBox.SelectedIndexChanged += new System.EventHandler(this.ToYComboBox_SelectedIndexChanged);
             // 
             // dataGridView
             // 
@@ -338,12 +338,15 @@
             this.dataGridView.AllowUserToDeleteRows = false;
             this.dataGridView.AllowUserToResizeColumns = false;
             this.dataGridView.AllowUserToResizeRows = false;
+            this.dataGridView.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
+            this.dataGridView.BackgroundColor = System.Drawing.SystemColors.Window;
             this.dataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridView.Location = new System.Drawing.Point(40, 177);
             this.dataGridView.Name = "dataGridView";
             this.dataGridView.ReadOnly = true;
             this.dataGridView.RowTemplate.Height = 25;
-            this.dataGridView.Size = new System.Drawing.Size(756, 302);
+            this.dataGridView.ScrollBars = System.Windows.Forms.ScrollBars.None;
+            this.dataGridView.Size = new System.Drawing.Size(904, 302);
             this.dataGridView.TabIndex = 20;
             // 
             // Detail
@@ -351,7 +354,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Info;
-            this.ClientSize = new System.Drawing.Size(837, 511);
+            this.ClientSize = new System.Drawing.Size(998, 553);
             this.Controls.Add(this.dataGridView);
             this.Controls.Add(this.toDComboBox);
             this.Controls.Add(this.label9);
