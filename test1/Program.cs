@@ -36,7 +36,7 @@ namespace test1
 
         static void WebDataThread()
         {
-            timer = new System.Timers.Timer(60000);
+            timer = new System.Timers.Timer(300000);
             timer.Elapsed += wepDataIniting;
             timer.AutoReset = true; ;
             timer.Enabled = true;
@@ -46,67 +46,79 @@ namespace test1
         public static async void wepDataIniting(object sender, EventArgs e)
         {
             HttpClient client = new HttpClient();
+
+            DateTime currentTime = DateTime.Now;
+            double minuts = -6;
+            DateTime pre_Time = currentTime.AddMinutes(minuts);
+        
+            string start_date_time = pre_Time.ToString("yyyy-MM-dd HH:mm:ss");          
+
             using StringContent jsonContent = new(
                 JsonSerializer.Serialize(new
                 {
                     module = "uck9JBnekzPe",
-                    datetime = "2022-11-26 12:00:00"
+                    datetime = start_date_time
+                    //datetime = "2022-11-26 04:45:42"
                 }),
                 Encoding.UTF8,
                 "application/json");
+            Console.WriteLine(jsonContent);
             using HttpResponseMessage response = await client.PostAsync("https://collapse.sakura.ne.jp/getstream.php", jsonContent);
 
             response.EnsureSuccessStatusCode();
 
             var jsonResponse = await response.Content.ReadAsStringAsync();
-
-            Item[] items = JsonSerializer.Deserialize<Item[]>(jsonResponse);
-
-            DiaplayDataAdding(items);
-
-            if (items != null)
+            try
             {
-                SQLiteConnection m_dbConnection;
-                var connection_path = "Data Source=" + Path.Combine(Directory.GetCurrentDirectory(), "rola.db");
-                m_dbConnection = new SQLiteConnection(connection_path);
+                Item[] items = JsonSerializer.Deserialize<Item[]>(jsonResponse);
+                SensorDataAdding(items);
+                DiaplayDataAdding(items);
+            }
+            catch
+            {
 
-                try
+            }  
+       
+            return;
+        }
+
+        public static void SensorDataAdding(Item[] items)
+        {
+            SQLiteConnection m_dbConnection;
+            var connection_path = "Data Source=" + Path.Combine(Directory.GetCurrentDirectory(), "rola.db");
+            m_dbConnection = new SQLiteConnection(connection_path);
+
+            try
+            {
+                m_dbConnection.Open();
+
+                foreach (var item in items)
                 {
-                    m_dbConnection.Open();
+                    var cmd = m_dbConnection.CreateCommand();
+                    string check_sql = "SELECT COUNT('sensorid') FROM sensors WHERE sensorid='" + item.sensorid + "'";
+                    cmd.CommandText = check_sql;
 
-                    foreach (var item in items)
+                    var exist_status_reader = cmd.ExecuteReader();
+                    while (exist_status_reader.Read())
                     {
-                        var cmd = m_dbConnection.CreateCommand();                            
-                          string check_sql = "SELECT COUNT('sensorid') FROM sensors WHERE sensorid='" + item.sensorid + "'";
-                          cmd.CommandText = check_sql;
-
-                          var exist_status_reader = cmd.ExecuteReader();
-                          while (exist_status_reader.Read())
-                          {
-                              int myreader = exist_status_reader.GetInt32(0);
-                              if(myreader == 0)
-                              {
-                                var insert_sensor_cmd = m_dbConnection.CreateCommand();
-                                string inser_sensor_sql = "INSERT INTO sensors('sensorid','uuid','data_id','data','datetime') VALUES('" + item.sensorid + "', '"
-                                    + item.uuid + "', '" + item.data_id + "','" + item.data + "', '" + item.datetime + "')";
-                                insert_sensor_cmd.CommandText = inser_sensor_sql;
-                                insert_sensor_cmd.ExecuteNonQuery();
-                              }
-                         } 
+                        int myreader = exist_status_reader.GetInt32(0);
+                        if (myreader == 0)
+                        {
+                            var insert_sensor_cmd = m_dbConnection.CreateCommand();
+                            string inser_sensor_sql = "INSERT INTO sensors('sensorid','uuid','data_id','data','datetime') VALUES('" + item.sensorid + "', '"
+                                + item.uuid + "', '" + item.data_id + "','" + item.data + "', '" + item.datetime + "')";
+                            insert_sensor_cmd.CommandText = inser_sensor_sql;
+                            insert_sensor_cmd.ExecuteNonQuery();
+                        }
                     }
                 }
-                catch (Exception ex)
-                {
-                    MessageBox.Show(ex.Message);
-                }
-
-
-                m_dbConnection.Close();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
             }
 
-            Debug.Print(jsonResponse);
-
-            return;
+            m_dbConnection.Close();
         }
         public static void DiaplayDataAdding(Item[] items)
         {          

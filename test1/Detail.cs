@@ -49,13 +49,13 @@ namespace test1
             dataGridView.DataSource = dt;
             dataGridView.RowHeadersVisible = false;
           //  dataGridView.Columns[0].ReadOnly = true;
-            dataGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+         //   dataGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dataGridView.AllowUserToAddRows = false;
             dataGridView.ScrollBars = ScrollBars.Both;         
           //  dataGridView.Columns[0].SortMode = DataGridViewColumnSortMode.NotSortable;
           //  dataGridView.Columns[1].SortMode = DataGridViewColumnSortMode.NotSortable; 
-            dataGridView.Columns[0].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
-            dataGridView.ColumnHeadersHeight = 50;
+            dataGridView.Columns[0].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;        
+
             for (int i = 0; i < 6; i++)
             {
                 dataGridView.Columns[i].HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
@@ -199,8 +199,13 @@ namespace test1
 
         private void GettingFromDB(){
 
-            string from_date = fromYComboBox.Text+"-"+fromMComboBox.Text+"-"+fromDComboBox.Text;
-            string to_date = toYComboBox.Text+"-"+toMComboBox.Text+"-"+toDComboBox.Text;
+            string from_month =  fromMComboBox.Text.Length==1?"0"+fromMComboBox.Text:fromMComboBox.Text;
+            string from_day =  fromDComboBox.Text.Length==1?"0"+fromDComboBox.Text:fromDComboBox.Text;
+            string to_month =  toMComboBox.Text.Length==1?"0"+toMComboBox.Text:toMComboBox.Text;
+            string to_day =  toDComboBox.Text.Length==1?"0"+toDComboBox.Text:toDComboBox.Text;
+            
+            string from_date = fromYComboBox.Text+"-"+from_month+"-"+from_day;
+            string to_date = toYComboBox.Text+"-"+to_month+"-"+to_day;
 
             SQLiteConnection m_dbConnection;
             var connection_path = "Data Source=" + Path.Combine(Directory.GetCurrentDirectory(), "rola.db");
