@@ -88,6 +88,7 @@ namespace test1
 
         public void ChangePaginating(int page_index)
         {
+            dt.Clear();
             int end_index = total_items_count > per_page_count * page_index ? per_page_count * page_index : total_items_count;
             for (int i = per_page_count * (page_index - 1); i < end_index; i++)
             {
@@ -142,7 +143,6 @@ namespace test1
             } else{
                 nextBtn.Enabled=true;
             }
-            MessageBox.Show(current_page_index.ToString());
         }
 
         public object[] create_row_obj(int row_number)
