@@ -58,15 +58,15 @@
             this.toYComboBox = new System.Windows.Forms.ComboBox();
             this.dataGridView = new System.Windows.Forms.DataGridView();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.button10 = new System.Windows.Forms.Button();
-            this.button9 = new System.Windows.Forms.Button();
-            this.button8 = new System.Windows.Forms.Button();
-            this.button7 = new System.Windows.Forms.Button();
-            this.button6 = new System.Windows.Forms.Button();
-            this.button5 = new System.Windows.Forms.Button();
-            this.button4 = new System.Windows.Forms.Button();
-            this.button3 = new System.Windows.Forms.Button();
-            this.button2 = new System.Windows.Forms.Button();
+            this.lastBtn = new System.Windows.Forms.Button();
+            this.nextBtn = new System.Windows.Forms.Button();
+            this.btn_5 = new System.Windows.Forms.Button();
+            this.btn_4 = new System.Windows.Forms.Button();
+            this.btn_3 = new System.Windows.Forms.Button();
+            this.btn_2 = new System.Windows.Forms.Button();
+            this.btn_1 = new System.Windows.Forms.Button();
+            this.preBtn = new System.Windows.Forms.Button();
+            this.firstBtn = new System.Windows.Forms.Button();
             this.flowLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView)).BeginInit();
             this.groupBox1.SuspendLayout();
@@ -411,176 +411,185 @@
             this.dataGridView.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
             this.dataGridView.RowTemplate.Height = 25;
             this.dataGridView.ScrollBars = System.Windows.Forms.ScrollBars.None;
-            this.dataGridView.Size = new System.Drawing.Size(904, 353);
+            this.dataGridView.Size = new System.Drawing.Size(904, 430);
             this.dataGridView.TabIndex = 20;
             // 
             // groupBox1
             // 
-            this.groupBox1.Controls.Add(this.button10);
-            this.groupBox1.Controls.Add(this.button9);
-            this.groupBox1.Controls.Add(this.button8);
-            this.groupBox1.Controls.Add(this.button7);
-            this.groupBox1.Controls.Add(this.button6);
-            this.groupBox1.Controls.Add(this.button5);
-            this.groupBox1.Controls.Add(this.button4);
-            this.groupBox1.Controls.Add(this.button3);
-            this.groupBox1.Controls.Add(this.button2);
-            this.groupBox1.Location = new System.Drawing.Point(199, 529);
+            this.groupBox1.Controls.Add(this.lastBtn);
+            this.groupBox1.Controls.Add(this.nextBtn);
+            this.groupBox1.Controls.Add(this.btn_5);
+            this.groupBox1.Controls.Add(this.btn_4);
+            this.groupBox1.Controls.Add(this.btn_3);
+            this.groupBox1.Controls.Add(this.btn_2);
+            this.groupBox1.Controls.Add(this.btn_1);
+            this.groupBox1.Controls.Add(this.preBtn);
+            this.groupBox1.Controls.Add(this.firstBtn);
+            this.groupBox1.Location = new System.Drawing.Point(214, 613);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(569, 58);
+            this.groupBox1.Size = new System.Drawing.Size(562, 58);
             this.groupBox1.TabIndex = 21;
             this.groupBox1.TabStop = false;
             // 
-            // button10
+            // lastBtn
             // 
-            this.button10.AutoSize = true;
-            this.button10.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.button10.Font = new System.Drawing.Font("Times New Roman", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.button10.ForeColor = System.Drawing.Color.MediumBlue;
-            this.button10.Location = new System.Drawing.Point(483, 17);
-            this.button10.Margin = new System.Windows.Forms.Padding(8);
-            this.button10.MaximumSize = new System.Drawing.Size(80, 30);
-            this.button10.MinimumSize = new System.Drawing.Size(80, 30);
-            this.button10.Name = "button10";
-            this.button10.Size = new System.Drawing.Size(80, 30);
-            this.button10.TabIndex = 8;
-            this.button10.Text = "last";
-            this.button10.UseVisualStyleBackColor = true;
+            this.lastBtn.AutoSize = true;
+            this.lastBtn.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.lastBtn.Font = new System.Drawing.Font("Times New Roman", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.lastBtn.ForeColor = System.Drawing.Color.MediumBlue;
+            this.lastBtn.Location = new System.Drawing.Point(477, 17);
+            this.lastBtn.Margin = new System.Windows.Forms.Padding(8);
+            this.lastBtn.MaximumSize = new System.Drawing.Size(80, 30);
+            this.lastBtn.MinimumSize = new System.Drawing.Size(80, 30);
+            this.lastBtn.Name = "lastBtn";
+            this.lastBtn.Size = new System.Drawing.Size(80, 30);
+            this.lastBtn.TabIndex = 8;
+            this.lastBtn.Text = "last";
+            this.lastBtn.UseVisualStyleBackColor = true;
+            this.lastBtn.Click += new System.EventHandler(this.lastBtn_Click);
             // 
-            // button9
+            // nextBtn
             // 
-            this.button9.AutoSize = true;
-            this.button9.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.button9.Font = new System.Drawing.Font("Times New Roman", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.button9.ForeColor = System.Drawing.Color.MediumBlue;
-            this.button9.Location = new System.Drawing.Point(400, 17);
-            this.button9.Margin = new System.Windows.Forms.Padding(8);
-            this.button9.MaximumSize = new System.Drawing.Size(80, 30);
-            this.button9.MinimumSize = new System.Drawing.Size(80, 30);
-            this.button9.Name = "button9";
-            this.button9.Size = new System.Drawing.Size(80, 30);
-            this.button9.TabIndex = 7;
-            this.button9.Text = "next";
-            this.button9.UseVisualStyleBackColor = true;
+            this.nextBtn.AutoSize = true;
+            this.nextBtn.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.nextBtn.Font = new System.Drawing.Font("Times New Roman", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.nextBtn.ForeColor = System.Drawing.Color.MediumBlue;
+            this.nextBtn.Location = new System.Drawing.Point(395, 17);
+            this.nextBtn.Margin = new System.Windows.Forms.Padding(8);
+            this.nextBtn.MaximumSize = new System.Drawing.Size(80, 30);
+            this.nextBtn.MinimumSize = new System.Drawing.Size(80, 30);
+            this.nextBtn.Name = "nextBtn";
+            this.nextBtn.Size = new System.Drawing.Size(80, 30);
+            this.nextBtn.TabIndex = 7;
+            this.nextBtn.Text = "next";
+            this.nextBtn.UseVisualStyleBackColor = true;
+            this.nextBtn.Click += new System.EventHandler(this.nextBtn_Click);
             // 
-            // button8
+            // btn_5
             // 
-            this.button8.AutoSize = true;
-            this.button8.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.button8.Font = new System.Drawing.Font("Times New Roman", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.button8.ForeColor = System.Drawing.Color.MediumBlue;
-            this.button8.Location = new System.Drawing.Point(352, 17);
-            this.button8.Margin = new System.Windows.Forms.Padding(20);
-            this.button8.MaximumSize = new System.Drawing.Size(40, 30);
-            this.button8.MinimumSize = new System.Drawing.Size(40, 30);
-            this.button8.Name = "button8";
-            this.button8.Size = new System.Drawing.Size(40, 30);
-            this.button8.TabIndex = 6;
-            this.button8.Text = "5";
-            this.button8.UseVisualStyleBackColor = true;
+            this.btn_5.AutoSize = true;
+            this.btn_5.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.btn_5.Font = new System.Drawing.Font("Times New Roman", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.btn_5.ForeColor = System.Drawing.Color.MediumBlue;
+            this.btn_5.Location = new System.Drawing.Point(352, 17);
+            this.btn_5.Margin = new System.Windows.Forms.Padding(20);
+            this.btn_5.MaximumSize = new System.Drawing.Size(40, 30);
+            this.btn_5.MinimumSize = new System.Drawing.Size(40, 30);
+            this.btn_5.Name = "btn_5";
+            this.btn_5.Size = new System.Drawing.Size(40, 30);
+            this.btn_5.TabIndex = 6;
+            this.btn_5.Text = "5";
+            this.btn_5.UseVisualStyleBackColor = true;
+            this.btn_5.Click += new System.EventHandler(this.btn_5_Click);
             // 
-            // button7
+            // btn_4
             // 
-            this.button7.AutoSize = true;
-            this.button7.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.button7.Font = new System.Drawing.Font("Times New Roman", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.button7.ForeColor = System.Drawing.Color.MediumBlue;
-            this.button7.Location = new System.Drawing.Point(306, 17);
-            this.button7.Margin = new System.Windows.Forms.Padding(8);
-            this.button7.MaximumSize = new System.Drawing.Size(40, 30);
-            this.button7.MinimumSize = new System.Drawing.Size(40, 30);
-            this.button7.Name = "button7";
-            this.button7.Size = new System.Drawing.Size(40, 30);
-            this.button7.TabIndex = 5;
-            this.button7.Text = "4";
-            this.button7.UseVisualStyleBackColor = true;
+            this.btn_4.AutoSize = true;
+            this.btn_4.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.btn_4.Font = new System.Drawing.Font("Times New Roman", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.btn_4.ForeColor = System.Drawing.Color.MediumBlue;
+            this.btn_4.Location = new System.Drawing.Point(306, 17);
+            this.btn_4.Margin = new System.Windows.Forms.Padding(8);
+            this.btn_4.MaximumSize = new System.Drawing.Size(40, 30);
+            this.btn_4.MinimumSize = new System.Drawing.Size(40, 30);
+            this.btn_4.Name = "btn_4";
+            this.btn_4.Size = new System.Drawing.Size(40, 30);
+            this.btn_4.TabIndex = 5;
+            this.btn_4.Text = "4";
+            this.btn_4.UseVisualStyleBackColor = true;
+            this.btn_4.Click += new System.EventHandler(this.btn_4_Click);
             // 
-            // button6
+            // btn_3
             // 
-            this.button6.AutoSize = true;
-            this.button6.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.button6.Font = new System.Drawing.Font("Times New Roman", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.button6.ForeColor = System.Drawing.Color.MediumBlue;
-            this.button6.Location = new System.Drawing.Point(261, 17);
-            this.button6.Margin = new System.Windows.Forms.Padding(8);
-            this.button6.MaximumSize = new System.Drawing.Size(40, 30);
-            this.button6.MinimumSize = new System.Drawing.Size(40, 30);
-            this.button6.Name = "button6";
-            this.button6.Size = new System.Drawing.Size(40, 30);
-            this.button6.TabIndex = 4;
-            this.button6.Text = "3";
-            this.button6.UseVisualStyleBackColor = true;
+            this.btn_3.AutoSize = true;
+            this.btn_3.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.btn_3.Font = new System.Drawing.Font("Times New Roman", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.btn_3.ForeColor = System.Drawing.Color.MediumBlue;
+            this.btn_3.Location = new System.Drawing.Point(261, 17);
+            this.btn_3.Margin = new System.Windows.Forms.Padding(8);
+            this.btn_3.MaximumSize = new System.Drawing.Size(40, 30);
+            this.btn_3.MinimumSize = new System.Drawing.Size(40, 30);
+            this.btn_3.Name = "btn_3";
+            this.btn_3.Size = new System.Drawing.Size(40, 30);
+            this.btn_3.TabIndex = 4;
+            this.btn_3.Text = "3";
+            this.btn_3.UseVisualStyleBackColor = true;
+            this.btn_3.Click += new System.EventHandler(this.btn_3_Click);
             // 
-            // button5
+            // btn_2
             // 
-            this.button5.AutoSize = true;
-            this.button5.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.button5.Font = new System.Drawing.Font("Times New Roman", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.button5.ForeColor = System.Drawing.Color.MediumBlue;
-            this.button5.Location = new System.Drawing.Point(216, 17);
-            this.button5.Margin = new System.Windows.Forms.Padding(8);
-            this.button5.MaximumSize = new System.Drawing.Size(40, 30);
-            this.button5.MinimumSize = new System.Drawing.Size(40, 30);
-            this.button5.Name = "button5";
-            this.button5.Size = new System.Drawing.Size(40, 30);
-            this.button5.TabIndex = 3;
-            this.button5.Text = "2";
-            this.button5.UseVisualStyleBackColor = true;
+            this.btn_2.AutoSize = true;
+            this.btn_2.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.btn_2.Font = new System.Drawing.Font("Times New Roman", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.btn_2.ForeColor = System.Drawing.Color.MediumBlue;
+            this.btn_2.Location = new System.Drawing.Point(216, 17);
+            this.btn_2.Margin = new System.Windows.Forms.Padding(8);
+            this.btn_2.MaximumSize = new System.Drawing.Size(40, 30);
+            this.btn_2.MinimumSize = new System.Drawing.Size(40, 30);
+            this.btn_2.Name = "btn_2";
+            this.btn_2.Size = new System.Drawing.Size(40, 30);
+            this.btn_2.TabIndex = 3;
+            this.btn_2.Text = "2";
+            this.btn_2.UseVisualStyleBackColor = true;
+            this.btn_2.Click += new System.EventHandler(this.btn_2_Click);
             // 
-            // button4
+            // btn_1
             // 
-            this.button4.AutoSize = true;
-            this.button4.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.button4.Font = new System.Drawing.Font("Times New Roman", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.button4.ForeColor = System.Drawing.Color.MediumBlue;
-            this.button4.Location = new System.Drawing.Point(171, 17);
-            this.button4.Margin = new System.Windows.Forms.Padding(8);
-            this.button4.MaximumSize = new System.Drawing.Size(40, 30);
-            this.button4.MinimumSize = new System.Drawing.Size(40, 30);
-            this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(40, 30);
-            this.button4.TabIndex = 2;
-            this.button4.Text = "1";
-            this.button4.UseVisualStyleBackColor = true;
+            this.btn_1.AutoSize = true;
+            this.btn_1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.btn_1.Font = new System.Drawing.Font("Times New Roman", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.btn_1.ForeColor = System.Drawing.Color.MediumBlue;
+            this.btn_1.Location = new System.Drawing.Point(171, 17);
+            this.btn_1.Margin = new System.Windows.Forms.Padding(8);
+            this.btn_1.MaximumSize = new System.Drawing.Size(40, 30);
+            this.btn_1.MinimumSize = new System.Drawing.Size(40, 30);
+            this.btn_1.Name = "btn_1";
+            this.btn_1.Size = new System.Drawing.Size(40, 30);
+            this.btn_1.TabIndex = 2;
+            this.btn_1.Text = "1";
+            this.btn_1.UseVisualStyleBackColor = true;
+            this.btn_1.Click += new System.EventHandler(this.btn_1_Click);
             // 
-            // button3
+            // preBtn
             // 
-            this.button3.AutoSize = true;
-            this.button3.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.button3.Font = new System.Drawing.Font("Times New Roman", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.button3.ForeColor = System.Drawing.Color.MediumBlue;
-            this.button3.Location = new System.Drawing.Point(87, 17);
-            this.button3.Margin = new System.Windows.Forms.Padding(12);
-            this.button3.MaximumSize = new System.Drawing.Size(80, 30);
-            this.button3.MinimumSize = new System.Drawing.Size(80, 30);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(80, 30);
-            this.button3.TabIndex = 1;
-            this.button3.Text = "pre";
-            this.button3.UseVisualStyleBackColor = true;
+            this.preBtn.AutoSize = true;
+            this.preBtn.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.preBtn.Font = new System.Drawing.Font("Times New Roman", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.preBtn.ForeColor = System.Drawing.Color.MediumBlue;
+            this.preBtn.Location = new System.Drawing.Point(87, 17);
+            this.preBtn.Margin = new System.Windows.Forms.Padding(12);
+            this.preBtn.MaximumSize = new System.Drawing.Size(80, 30);
+            this.preBtn.MinimumSize = new System.Drawing.Size(80, 30);
+            this.preBtn.Name = "preBtn";
+            this.preBtn.Size = new System.Drawing.Size(80, 30);
+            this.preBtn.TabIndex = 1;
+            this.preBtn.Text = "pre";
+            this.preBtn.UseVisualStyleBackColor = true;
+            this.preBtn.Click += new System.EventHandler(this.preBtn_Click);
             // 
-            // button2
+            // firstBtn
             // 
-            this.button2.AutoSize = true;
-            this.button2.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.button2.Font = new System.Drawing.Font("Times New Roman", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.button2.ForeColor = System.Drawing.Color.MediumBlue;
-            this.button2.Location = new System.Drawing.Point(4, 17);
-            this.button2.Margin = new System.Windows.Forms.Padding(8);
-            this.button2.MaximumSize = new System.Drawing.Size(80, 30);
-            this.button2.MinimumSize = new System.Drawing.Size(80, 30);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(80, 30);
-            this.button2.TabIndex = 0;
-            this.button2.Text = "first";
-            this.button2.UseVisualStyleBackColor = true;
+            this.firstBtn.AutoSize = true;
+            this.firstBtn.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.firstBtn.Font = new System.Drawing.Font("Times New Roman", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.firstBtn.ForeColor = System.Drawing.Color.MediumBlue;
+            this.firstBtn.Location = new System.Drawing.Point(4, 17);
+            this.firstBtn.Margin = new System.Windows.Forms.Padding(8);
+            this.firstBtn.MaximumSize = new System.Drawing.Size(80, 30);
+            this.firstBtn.MinimumSize = new System.Drawing.Size(80, 30);
+            this.firstBtn.Name = "firstBtn";
+            this.firstBtn.Size = new System.Drawing.Size(80, 30);
+            this.firstBtn.TabIndex = 0;
+            this.firstBtn.Text = "first";
+            this.firstBtn.UseVisualStyleBackColor = true;
+            this.firstBtn.Click += new System.EventHandler(this.firstBtn_Click);
             // 
             // Detail
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Info;
-            this.ClientSize = new System.Drawing.Size(980, 607);
+            this.ClientSize = new System.Drawing.Size(980, 665);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.dataGridView);
             this.Controls.Add(this.toDComboBox);
@@ -604,7 +613,7 @@
             this.Controls.Add(this.flowLayoutPanel1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Fixed3D;
             this.Margin = new System.Windows.Forms.Padding(4);
-            this.MaximumSize = new System.Drawing.Size(1000, 650);
+            this.MaximumSize = new System.Drawing.Size(1000, 800);
             this.MinimumSize = new System.Drawing.Size(900, 550);
             this.Name = "Detail";
             this.Text = "Web Data";
@@ -644,15 +653,15 @@
         private ComboBox toYComboBox;
         private DataGridView dataGridView;
         private GroupBox groupBox1;
-        private Button button2;
-        private Button button10;
-        private Button button9;
-        private Button button8;
-        private Button button7;
-        private Button button6;
-        private Button button5;
-        private Button button4;
-        private Button button3;
+        private Button firstBtn;
+        private Button lastBtn;
+        private Button nextBtn;
+        private Button btn_5;
+        private Button btn_4;
+        private Button btn_3;
+        private Button btn_2;
+        private Button btn_1;
+        private Button preBtn;
         private Label label11;
         private Label label12;
         private Label label13;

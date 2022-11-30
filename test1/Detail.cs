@@ -19,25 +19,30 @@ using System.Data.SQLite;
 using Org.BouncyCastle.Utilities.Collections;
 
 namespace test1
-{      
+{
     public partial class Detail : Form
     {
         string[] itemLists = { "傾斜", "気温", "湿度", "雨量", "風速", "風向", "水位" };
 
         List<DisplayItem> display_item_list = new List<DisplayItem>();
-        
+
         public bool is_initing = false;
         public DataTable dt;
+        int total_items_count = 0;
+        int per_page_count = 15;
+        int current_page_group = 1;
+        int current_page_index = 1;
+
         public Detail()
         {
             InitializeComponent();
             Combos_Initing();
-            AddDataTableIniting(); 
-            AddDataTableContaining();           
+            AddDataTableIniting();
+            AddDataTableContaining();
         }
 
         public void AddDataTableIniting()
-        {           
+        {
             dt = new DataTable();
             dt.Columns.Add("登録日", typeof(string));
             dt.Columns.Add("気温", typeof(string));
@@ -48,13 +53,13 @@ namespace test1
 
             dataGridView.DataSource = dt;
             dataGridView.RowHeadersVisible = false;
-          //  dataGridView.Columns[0].ReadOnly = true;
-         //   dataGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            //  dataGridView.Columns[0].ReadOnly = true;
+            //   dataGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dataGridView.AllowUserToAddRows = false;
-            dataGridView.ScrollBars = ScrollBars.Both;         
-          //  dataGridView.Columns[0].SortMode = DataGridViewColumnSortMode.NotSortable;
-          //  dataGridView.Columns[1].SortMode = DataGridViewColumnSortMode.NotSortable; 
-            dataGridView.Columns[0].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;        
+            dataGridView.ScrollBars = ScrollBars.None;
+            //  dataGridView.Columns[0].SortMode = DataGridViewColumnSortMode.NotSortable;
+            //  dataGridView.Columns[1].SortMode = DataGridViewColumnSortMode.NotSortable; 
+            dataGridView.Columns[0].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
 
             for (int i = 0; i < 6; i++)
             {
@@ -63,34 +68,93 @@ namespace test1
             }
         }
 
-         public void AddDataTableContaining()
+        public void AddDataTableContaining()
         {
             dt.Clear();
             GettingFromDB();
-            int row_count = display_item_list.Count;
 
-            for (int i = 0; i < display_item_list.Count; i++)
+            total_items_count = display_item_list.Count;
+
+            ChangePaginating(1);
+            Paginator_Buttons_Control();
+
+            // for (int i = 0; i < total_items_count; i++)
+            // {
+            //     dt.Rows.Add(create_row_obj(i));
+            // }
+            dataGridView.Height = dataGridView.ColumnHeadersHeight + dataGridView.RowTemplate.Height * 15 + 15;
+            dataGridView.DefaultCellStyle.Font = new Font("Arial", 14);
+        }
+
+        public void ChangePaginating(int page_index)
+        {
+            int end_index = total_items_count > per_page_count * page_index ? per_page_count * page_index : total_items_count;
+            for (int i = per_page_count * (page_index - 1); i < end_index; i++)
             {
                 dt.Rows.Add(create_row_obj(i));
             }
-           // dataGridView.Height = dataGridView.ColumnHeadersHeight + dataGridView.RowTemplate.Height * (row_count-1);
-            dataGridView.DefaultCellStyle.Font = new Font("Arial", 13);  
         }
 
-        public void ChangePaginating(){
-            
+        public void Paginator_Buttons_Control()
+        {
+            if (total_items_count < 5 * current_page_group  * per_page_count)
+            {
+                lastBtn.Enabled = false;                
+            }else{
+                lastBtn.Enabled = true; 
+            }
+            if (current_page_group == 1)
+            {
+                firstBtn.Enabled = false;
+            }else{
+                firstBtn.Enabled = true;
+            }
+            btn_1.Text = (5 * (current_page_group - 1) + 1).ToString();
+            btn_2.Text = (5 * (current_page_group - 1) + 2).ToString();
+            btn_3.Text = (5 * (current_page_group - 1) + 3).ToString();
+            btn_4.Text = (5 * (current_page_group - 1) + 4).ToString();
+            btn_5.Text = (5 * (current_page_group - 1) + 5).ToString();
+
+            if ((5 * (current_page_group - 1) + 2) * per_page_count > total_items_count)
+                btn_2.Hide();
+            else
+                btn_2.Show();
+            if ((5 * (current_page_group - 1) + 3) * per_page_count > total_items_count)
+                btn_3.Hide();
+            else
+                btn_3.Show();
+            if ((5 * (current_page_group - 1) + 4) * per_page_count > total_items_count)
+                btn_4.Hide();
+            else
+                btn_4.Show();
+            if ((5 * (current_page_group - 1) + 5) * per_page_count > total_items_count)
+                btn_5.Hide();
+            else
+                btn_5.Show();
+
+            if(current_page_index==1) {
+                preBtn.Enabled=false;
+            }else{
+                preBtn.Enabled=true;
+            }
+            if(current_page_index==5*current_page_group||per_page_count*current_page_index>total_items_count){
+                nextBtn.Enabled=false;  
+            } else{
+                nextBtn.Enabled=true;
+            }
+            MessageBox.Show(current_page_index.ToString());
         }
 
         public object[] create_row_obj(int row_number)
         {
             object[] objs = new object[6];
-            objs[0]=display_item_list[row_number].datetime;
-            objs[1]=display_item_list[row_number].temperature;
-            objs[2]=display_item_list[row_number].humidity;
-            objs[3]=display_item_list[row_number].pressure;
-            objs[4]=display_item_list[row_number].gradient;
-            objs[5]=display_item_list[row_number].voltage;
-            
+            objs[0] = display_item_list[row_number].datetime;
+            objs[1] = display_item_list[row_number].temperature;
+            objs[2] = display_item_list[row_number].humidity;
+            objs[3] = display_item_list[row_number].pressure;
+            objs[4] = display_item_list[row_number].gradient;
+            objs[5] = display_item_list[row_number].voltage;
+
             return objs;
         }
 
@@ -192,7 +256,7 @@ namespace test1
         private void ToDComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             //filtering...
-           
+
         }
 
         private void SearchButton_Click(object sender, EventArgs e)
@@ -201,15 +265,16 @@ namespace test1
             AddDataTableContaining();
         }
 
-        private void GettingFromDB(){
+        private void GettingFromDB()
+        {
 
-            string from_month =  fromMComboBox.Text.Length==1?"0"+fromMComboBox.Text:fromMComboBox.Text;
-            string from_day =  fromDComboBox.Text.Length==1?"0"+fromDComboBox.Text:fromDComboBox.Text;
-            string to_month =  toMComboBox.Text.Length==1?"0"+toMComboBox.Text:toMComboBox.Text;
-            string to_day =  toDComboBox.Text.Length==1?"0"+toDComboBox.Text:toDComboBox.Text;
-            
-            string from_date = fromYComboBox.Text+"-"+from_month+"-"+from_day;
-            string to_date = toYComboBox.Text+"-"+to_month+"-"+to_day;
+            string from_month = fromMComboBox.Text.Length == 1 ? "0" + fromMComboBox.Text : fromMComboBox.Text;
+            string from_day = fromDComboBox.Text.Length == 1 ? "0" + fromDComboBox.Text : fromDComboBox.Text;
+            string to_month = toMComboBox.Text.Length == 1 ? "0" + toMComboBox.Text : toMComboBox.Text;
+            string to_day = toDComboBox.Text.Length == 1 ? "0" + toDComboBox.Text : toDComboBox.Text;
+
+            string from_date = fromYComboBox.Text + "-" + from_month + "-" + from_day;
+            string to_date = toYComboBox.Text + "-" + to_month + "-" + to_day;
 
             SQLiteConnection m_dbConnection;
             var connection_path = "Data Source=" + Path.Combine(Directory.GetCurrentDirectory(), "rola.db");
@@ -218,13 +283,13 @@ namespace test1
             try
             {
                 m_dbConnection.Open();
-                
-                var cmd = m_dbConnection.CreateCommand();                            
-                string get_display_sql = "SELECT *FROM display WHERE datetime>'"+from_date
-                +" 00:00:00' AND datetime<'"+to_date+" 24:00:00'";
+
+                var cmd = m_dbConnection.CreateCommand();
+                string get_display_sql = "SELECT *FROM display WHERE datetime>'" + from_date
+                + " 00:00:00' AND datetime<'" + to_date + " 24:00:00'";
 
                 //get_display_sql = "SELECT *FROM display WHERE datetime>'2022-11-29 00:00:00' AND datetime<='2022-11-29 24:00:00'";
-                
+
                 cmd.CommandText = get_display_sql;
 
                 var display_data_reader = cmd.ExecuteReader();
@@ -234,15 +299,15 @@ namespace test1
                 while (display_data_reader.Read())
                 {
                     DisplayItem item = new DisplayItem();
-                    item.temperature = display_data_reader.GetString(1); 
-                    item.humidity = display_data_reader.GetString(2); 
-                    item.voltage = display_data_reader.GetString(3); 
-                    item.pressure = display_data_reader.GetString(4); 
-                    item.gradient = display_data_reader.GetString(5); 
-                    item.uuid = display_data_reader.GetString(6); 
-                    item.datetime = display_data_reader.GetString(7);   
-                    display_item_list.Add(item);              
-                }                 
+                    item.temperature = display_data_reader.GetString(1);
+                    item.humidity = display_data_reader.GetString(2);
+                    item.voltage = display_data_reader.GetString(3);
+                    item.pressure = display_data_reader.GetString(4);
+                    item.gradient = display_data_reader.GetString(5);
+                    item.uuid = display_data_reader.GetString(6);
+                    item.datetime = display_data_reader.GetString(7);
+                    display_item_list.Add(item);
+                }
             }
             catch (Exception ex)
             {
@@ -251,6 +316,67 @@ namespace test1
 
             m_dbConnection.Close();
         }
-      
+
+        private void firstBtn_Click(object sender, EventArgs e)
+        {
+            current_page_index = 1;
+            current_page_group = 1;
+            Paginator_Buttons_Control();
+            ChangePaginating(current_page_index);
+        }
+
+        private void lastBtn_Click(object sender, EventArgs e)
+        {
+            current_page_index = (total_items_count % per_page_count) == 0 ? (total_items_count / per_page_count) : (total_items_count / per_page_count) + 1;
+            current_page_group = (current_page_index % 5) == 0 ? (current_page_index / 5) : (current_page_index / 5) + 1; 
+            Paginator_Buttons_Control();
+            ChangePaginating(current_page_index);
+        }
+
+        private void preBtn_Click(object sender, EventArgs e)
+        {
+            current_page_group= current_page_group-1;
+            current_page_index = 5 * (current_page_group-1) + 1;
+            Paginator_Buttons_Control();
+            ChangePaginating(current_page_index);
+        }
+
+        private void nextBtn_Click(object sender, EventArgs e)
+        {
+            current_page_group= current_page_group+1;
+            current_page_index = 5 * (current_page_group-1) + 1;
+            Paginator_Buttons_Control();
+            ChangePaginating(current_page_index);
+        }
+
+        private void btn_1_Click(object sender, EventArgs e)
+        {
+            current_page_index = 5 * current_page_group + 1;
+            ChangePaginating(current_page_index);
+        }
+
+        private void btn_2_Click(object sender, EventArgs e)
+        {
+            current_page_index = 5 * current_page_group + 2;
+            ChangePaginating(current_page_index);
+        }
+
+        private void btn_3_Click(object sender, EventArgs e)
+        {
+            current_page_index = 5 * current_page_group + 3;
+            ChangePaginating(current_page_index);
+        }
+
+        private void btn_4_Click(object sender, EventArgs e)
+        {
+            current_page_index = 5 * current_page_group + 4;
+            ChangePaginating(current_page_index);
+        }
+
+        private void btn_5_Click(object sender, EventArgs e)
+        {
+            current_page_index = 5 * current_page_group + 5;
+            ChangePaginating(current_page_index);
+        }
     }
 }
