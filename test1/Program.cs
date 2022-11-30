@@ -6,14 +6,7 @@ using System.Text.Json;
 
 namespace test1
 {
-    public class Item
-    {
-        public string sensorid { set; get; }
-        public string uuid { set; get; }
-        public string data_id { set; get; }
-        public string data { set; get; }
-        public string datetime { set; get; }
-    }
+   
     internal static class Program
     {
         /// <summary>

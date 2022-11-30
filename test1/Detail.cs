@@ -77,6 +77,10 @@ namespace test1
             dataGridView.DefaultCellStyle.Font = new Font("Arial", 13);  
         }
 
+        public void ChangePaginating(){
+            
+        }
+
         public object[] create_row_obj(int row_number)
         {
             object[] objs = new object[6];
@@ -247,5 +251,6 @@ namespace test1
 
             m_dbConnection.Close();
         }
+      
     }
 }
