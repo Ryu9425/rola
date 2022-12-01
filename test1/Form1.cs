@@ -2,112 +2,192 @@ using System.Reflection;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data.SQLite;
-using static System.Net.Mime.MediaTypeNames;
 using System.Data;
 using System.Windows.Forms;
-using MySql.Data.MySqlClient;
 
 namespace test1
 {
     public partial class Form1 : Form
-    {
+    {   
+        SQLiteConnection m_dbConnection;
+        string connection_path = "Data Source=" + Path.Combine(Directory.GetCurrentDirectory(), "rola.db");
+        string[] itemLists = { "傾斜", "気温", "湿度", "気圧", "電池電圧" };
 
-        private MySqlConnection connection;
-        private string server;
-        private string database;
-        private string username;
-        private string password;
-
-       
-
+        List<KeyUUID> key_uuid_list = new List<KeyUUID>();
         public Form1()
         {
             InitializeComponent();
-            mysql_db_connection();
-            addDataTable();
-            addDataTable();
-            addDataTable();
-            addDataTable();
+            GetKeyUUID_Datas();
+            SensorDatasView();            
         }
 
-        public void addDataTable()
-        {
-            string[] itemLists =  { "�X��", "�C��", "���x", "�J��", "����", "����", "����" };
-            int row_count = 7;
+        public void GetKeyUUID_Datas(){
+            m_dbConnection = new SQLiteConnection(connection_path);
+                       
+            try{
+                m_dbConnection.Open();                
+                var command = m_dbConnection.CreateCommand();
+                command.CommandText ="SELECT *FROM sensor_setting ORDER BY id";
+                using (var reader = command.ExecuteReader())
+                {
+                    key_uuid_list.Clear();
+                    while (reader.Read())
+                    {    
+                        KeyUUID key_uuid = new KeyUUID();   
+                        key_uuid.display_name = reader.GetString(1);
+                        key_uuid.uuid = reader.GetString(2);
+                        key_uuid.standard = reader.GetValue(3).ToString();
+                        key_uuid.is_gradient=reader.GetInt32(4)==1?true:false;
+                        key_uuid.is_humidity=reader.GetInt32(5)==1?true:false;
+                        key_uuid.is_temperature=reader.GetInt32(6)==1?true:false;
+                        key_uuid.is_pressure=reader.GetInt32(7)==1?true:false;
+                        key_uuid.is_voltage=reader.GetInt32(8)==1?true:false;
 
+                        key_uuid_list.Add(key_uuid);
+                    }
+                }
+            }catch{
+            }
+            m_dbConnection.Close();  
+        }
+
+        public void SensorDatasView()
+        {
+            AddDataTable(dataGridView_1,0);
+            AddDataTable(dataGridView_2,1);
+            AddDataTable(dataGridView_3,2);
+            AddDataTable(dataGridView_4,3);
+            AddDataTable(dataGridView_5,4);
+        }
+        public void AddDataTable(DataGridView dataGridView, int _id)
+        {
             DataTable dt = new DataTable();
             dt.Columns.Add("ColA", typeof(string));
             dt.Columns.Add("ColB", typeof(string));   
 
-            dt.Rows.Add(new object[] { itemLists[0], "a" });
-            dt.Rows.Add(new object[] { itemLists[1], "b" });
-            dt.Rows.Add(new object[] { itemLists[2], "c" });
-            dt.Rows.Add(new object[] { itemLists[3], "d" });
-            dt.Rows.Add(new object[] { itemLists[4], "e" });
-            dt.Rows.Add(new object[] { itemLists[5], "f" });
-            dt.Rows.Add(new object[] { itemLists[6], "g" });
+            m_dbConnection = new SQLiteConnection(connection_path);
+            string uuid=key_uuid_list[_id].uuid; 
+            int row_count=0;
+          //  MessageBox.Show(uuid);
+            
+            try{
+                m_dbConnection.Open();                
+                var command = m_dbConnection.CreateCommand();
+                command.CommandText ="SELECT *FROM display WHERE uuid='"+uuid+"' ORDER BY datetime DESC";
+               
+                using (var reader = command.ExecuteReader())
+                {
+                   // MessageBox.Show("SELECT *FROM display WHERE uuid='" + uuid + "' ORDER BY datetime DESC");
+                    if (reader.Read())
+                    {                       
+                        var temperature= reader.GetString(1)!=""?reader.GetString(1):"";
+                        var humidity=reader.GetString(2) != "" ? reader.GetString(2) : "";
+                        var voltage = reader.GetValue(3).ToString();
+                        var pressure=reader.GetString(4) != "" ? reader.GetString(4) : "";
+                        var gradient=reader.GetString(5) != "" ? reader.GetString(5) : "";  
+                         
+                        if(key_uuid_list[0].is_gradient) {
+                            dt.Rows.Add(new object[]{itemLists[0],gradient+"°"});
+                            row_count++;
+                        }
+                        if(key_uuid_list[0].is_temperature) {
+                            dt.Rows.Add(new object[]{itemLists[1],temperature+"℃"});
+                            row_count++;
+                        }
+                        if(key_uuid_list[0].is_humidity){
+                            dt.Rows.Add(new object[]{itemLists[2],humidity+"%"});
+                            row_count++;
+                        } 
+                        if(key_uuid_list[0].is_pressure){
+                            dt.Rows.Add(new object[]{itemLists[3],pressure+"hPa"});
+                            row_count++;
+                        } 
+                        if(key_uuid_list[0].is_voltage) {
+                            dt.Rows.Add(new object[]{itemLists[4],voltage+"V"});
+                            row_count++;
+                        }
+                    }
+                    else
+                    {
+                        if (key_uuid_list[0].is_gradient)
+                        {
+                            dt.Rows.Add(new object[] { itemLists[0], "" });
+                            row_count++;
+                        }
+                        if (key_uuid_list[0].is_temperature)
+                        {
+                            dt.Rows.Add(new object[] { itemLists[1],"" });
+                            row_count++;
+                        }
+                        if (key_uuid_list[0].is_humidity)
+                        {
+                            dt.Rows.Add(new object[] { itemLists[2], "" });
+                            row_count++;
+                        }
+                        if (key_uuid_list[0].is_pressure)
+                        {
+                            dt.Rows.Add(new object[] { itemLists[3], "" });
+                            row_count++;
+                        }
+                        if (key_uuid_list[0].is_voltage)
+                        {
+                            dt.Rows.Add(new object[] { itemLists[4], "" });
+                            row_count++;
+                        }
+                    }
+                }
+            }catch{
 
-            DataGridView dataGridView = new DataGridView();
-            this.flowLayoutPanel1.Controls.Add(dataGridView);            
+            }
+            m_dbConnection.Close();                 
 
-            dataGridView.DataSource = dt;
-            dataGridView.RowHeadersVisible = false;
+            dataGridView.DataSource = dt; 
+            dataGridView.Height = 35*row_count;
+            DataGridViewStyiling(dataGridView);                
+        }
+
+        public void AddDateTime()
+        {       
+            m_dbConnection = new SQLiteConnection(connection_path);           
+            
+            try{
+                m_dbConnection.Open();                
+                var command = m_dbConnection.CreateCommand();
+                command.CommandText ="SELECT MAX(datetime) FROM display";
+               
+                using (var reader = command.ExecuteReader())
+                {
+                    if (reader.Read())
+                    {                       
+                        var temperature= reader.GetString(0);                        
+                    }
+                }
+            }catch{
+
+            }
+            m_dbConnection.Close();  
+        }
+
+        private void DataGridViewStyiling(DataGridView dataGridView){
             dataGridView.EditMode = DataGridViewEditMode.EditProgrammatically;
             dataGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dataGridView.AllowUserToAddRows = false;
             dataGridView.ScrollBars = ScrollBars.None;
-            dataGridView.Columns[0].HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
-            dataGridView.Columns[1].HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
             dataGridView.Columns[0].SortMode = DataGridViewColumnSortMode.NotSortable;
             dataGridView.Columns[1].SortMode = DataGridViewColumnSortMode.NotSortable;
             dataGridView.Columns[0].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
-            dataGridView.Columns[1].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
-            dataGridView.Height = dataGridView.ColumnHeadersHeight+dataGridView.RowTemplate.Height*row_count;
-            dataGridView.DefaultCellStyle.Font = new Font("Arial", 13);
-            dataGridView.Width = 150;
-        }
+            dataGridView.Columns[1].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
 
-        private void db_connection()
-        {
-            using (var connection = new SQLiteConnection("Data Source=hamster.db"))
-            {
-                connection.Open();
-
-                var command = connection.CreateCommand();
-                command.CommandText = @"SELECT *FROM status";
-
-                using (var reader = command.ExecuteReader())
-                {
-                    while (reader.Read())
-                    {
-                        var name = reader.GetString(1);
-                        
-
-                        Console.WriteLine($"Hello, {name}!");
-                        //MessageBox.Show("name:" + name);
-                    }
-                }
-            }
-        }
-
-        private void mysql_db_connection()
-        {
-            server = "localhost";
-            database = "c_shap";
-            username = "root";
-            password = "";
-            string connectionString;
-            connectionString = "SERVER=" + server + ";" + "DATABASE=" +
-            database + ";" + "UID=" + username + ";" + "PASSWORD=" + password + ";";
-
-            connection = new MySqlConnection(connectionString);
+            dataGridView.RowTemplate.Height=35;
+            dataGridView.DefaultCellStyle.Font = new Font("Arial", 15);
+            dataGridView.Width = 230; 
         }
 
         private void button_Click(object sender, EventArgs e)
         {
             Form form2 = new Form2();
             form2.Show();
-            this.Hide();
+           // this.Hide();
         }
 
         private void flowLayoutPanel1_Paint(object sender, PaintEventArgs e)
@@ -116,107 +196,18 @@ namespace test1
         }
 
         private void Form1_Load(object sender, EventArgs e)
-        {
-
+        {           
+            dataGridView_1.ClearSelection(); 
+            dataGridView_2.ClearSelection(); 
+            dataGridView_3.ClearSelection(); 
+            dataGridView_4.ClearSelection(); 
+            dataGridView_5.ClearSelection(); 
         }
 
-        private bool OpenConnection()
+        private void DisplayDetailDatas(object sender, EventArgs e)
         {
-            try
-            {
-                connection.Open();
-                return true;
-            }
-            catch (MySqlException ex)
-            {
-                //When handling errors, you can your application's response based 
-                //on the error number.
-                //The two most common error numbers when connecting are as follows:
-                //0: Cannot connect to server.
-                //1045: Invalid user name and/or password.
-                switch (ex.Number)
-                {
-                    case 0:
-                        MessageBox.Show("Cannot connect to server.  Contact administrator");
-                        break;
-
-                    case 1045:
-                        MessageBox.Show("Invalid username/password, please try again");
-                        break;
-                }
-                return false;
-            }
+            dataGridView_1.ClearSelection(); 
         }
-
-        //Close connection
-        private bool CloseConnection()
-        {
-            try
-            {
-                connection.Close();
-                return true;
-            }
-            catch (MySqlException ex)
-            {
-                MessageBox.Show(ex.Message);
-                return false;
-            }
-        }
-
-
-        //Insert statement
-        public void Insert()
-        {
-            string query = "INSERT INTO tableinfo (name, age) VALUES('John Smith', '33')";
-
-            //open connection
-            if (this.OpenConnection() == true)
-            {
-                //create command and assign the query and connection from the constructor
-                MySqlCommand cmd = new MySqlCommand(query, connection);
-
-                //Execute command
-                cmd.ExecuteNonQuery();
-
-                //close connection
-                this.CloseConnection();
-            }
-        }
-
-        //Update statement
-        public void Update()
-        {
-            string query = "UPDATE tableinfo SET name='Joe', age='22' WHERE name='John Smith'";
-
-            //Open connection
-            if (this.OpenConnection() == true)
-            {
-                //create mysql command
-                MySqlCommand cmd = new MySqlCommand();
-                //Assign the query using CommandText
-                cmd.CommandText = query;
-                //Assign the connection using Connection
-                cmd.Connection = connection;
-
-                //Execute query
-                cmd.ExecuteNonQuery();
-
-                //close connection
-                this.CloseConnection();
-            }
-        }
-
-        //Delete statement
-        public void Delete()
-        {
-            string query = "DELETE FROM tableinfo WHERE name='John Smith'";
-
-            if (this.OpenConnection() == true)
-            {
-                MySqlCommand cmd = new MySqlCommand(query, connection);
-                cmd.ExecuteNonQuery();
-                this.CloseConnection();
-            }
-        }
+       
     }
 }

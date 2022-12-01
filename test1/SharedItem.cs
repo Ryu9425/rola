@@ -26,10 +26,22 @@ namespace test1
     public class KeyUUID{
         public string display_name { set; get; }
         public string uuid { set; get; }
+        public string standard { set; get; }
+        public bool is_gradient { set; get; }
+        public bool is_humidity { set; get; }
+        public bool is_temperature { set; get; }
+        public bool is_pressure { set; get; }
+        public bool is_voltage { set; get; }
 
-        public KeyUUID(string _display_name, string _uuid){
-              display_name=_display_name;
-              uuid=_uuid;
+        public KeyUUID(){
+            display_name="";
+            uuid="";
+            standard="";
+            is_gradient=false;
+            is_humidity=false;
+            is_temperature=false;
+            is_pressure=false;
+            is_voltage=false;
         }
 
         public string GetDisplayName(){

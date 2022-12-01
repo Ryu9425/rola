@@ -24,7 +24,7 @@ namespace test1
             web_thread.IsBackground = true;
             web_thread.Start();
             ApplicationConfiguration.Initialize();
-            Application.Run(new Detail());
+            Application.Run(new Form1());
         }
 
         static void WebDataThread()
