@@ -31,13 +31,13 @@
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
-            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.displayBox = new System.Windows.Forms.TextBox();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.label11 = new System.Windows.Forms.Label();
             this.label12 = new System.Windows.Forms.Label();
-            this.textBox4 = new System.Windows.Forms.TextBox();
+            this.uuidBox = new System.Windows.Forms.TextBox();
             this.label13 = new System.Windows.Forms.Label();
-            this.textBox6 = new System.Windows.Forms.TextBox();
+            this.standardBox = new System.Windows.Forms.TextBox();
             this.button1 = new System.Windows.Forms.Button();
             this.searchButton = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
@@ -72,24 +72,25 @@
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
-            // textBox1
+            // displayBox
             // 
-            this.textBox1.Font = new System.Drawing.Font("Segoe UI", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.textBox1.Location = new System.Drawing.Point(128, 0);
-            this.textBox1.Margin = new System.Windows.Forms.Padding(0);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(119, 36);
-            this.textBox1.TabIndex = 0;
-            this.textBox1.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.displayBox.Font = new System.Drawing.Font("Segoe UI", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.displayBox.Location = new System.Drawing.Point(128, 0);
+            this.displayBox.Margin = new System.Windows.Forms.Padding(0);
+            this.displayBox.Name = "displayBox";
+            this.displayBox.Size = new System.Drawing.Size(119, 36);
+            this.displayBox.TabIndex = 0;
+            this.displayBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.displayBox.TextChanged += new System.EventHandler(this.displayBox_TextChanged);
             // 
             // flowLayoutPanel1
             // 
             this.flowLayoutPanel1.Controls.Add(this.label11);
-            this.flowLayoutPanel1.Controls.Add(this.textBox1);
+            this.flowLayoutPanel1.Controls.Add(this.displayBox);
             this.flowLayoutPanel1.Controls.Add(this.label12);
-            this.flowLayoutPanel1.Controls.Add(this.textBox4);
+            this.flowLayoutPanel1.Controls.Add(this.uuidBox);
             this.flowLayoutPanel1.Controls.Add(this.label13);
-            this.flowLayoutPanel1.Controls.Add(this.textBox6);
+            this.flowLayoutPanel1.Controls.Add(this.standardBox);
             this.flowLayoutPanel1.Font = new System.Drawing.Font("Segoe UI", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.flowLayoutPanel1.Location = new System.Drawing.Point(146, 38);
             this.flowLayoutPanel1.Margin = new System.Windows.Forms.Padding(0);
@@ -127,15 +128,16 @@
             this.label12.Text = "ID";
             this.label12.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // textBox4
+            // uuidBox
             // 
-            this.textBox4.Font = new System.Drawing.Font("Segoe UI", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.textBox4.Location = new System.Drawing.Point(367, 0);
-            this.textBox4.Margin = new System.Windows.Forms.Padding(0);
-            this.textBox4.Name = "textBox4";
-            this.textBox4.Size = new System.Drawing.Size(119, 36);
-            this.textBox4.TabIndex = 3;
-            this.textBox4.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.uuidBox.Font = new System.Drawing.Font("Segoe UI", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.uuidBox.Location = new System.Drawing.Point(367, 0);
+            this.uuidBox.Margin = new System.Windows.Forms.Padding(0);
+            this.uuidBox.Name = "uuidBox";
+            this.uuidBox.Size = new System.Drawing.Size(119, 36);
+            this.uuidBox.TabIndex = 3;
+            this.uuidBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.uuidBox.TextChanged += new System.EventHandler(this.uuidBox_TextChanged);
             // 
             // label13
             // 
@@ -153,15 +155,16 @@
             this.label13.Text = "基準角度";
             this.label13.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // textBox6
+            // standardBox
             // 
-            this.textBox6.Font = new System.Drawing.Font("Segoe UI", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.textBox6.Location = new System.Drawing.Point(606, 0);
-            this.textBox6.Margin = new System.Windows.Forms.Padding(0);
-            this.textBox6.Name = "textBox6";
-            this.textBox6.Size = new System.Drawing.Size(119, 36);
-            this.textBox6.TabIndex = 5;
-            this.textBox6.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.standardBox.Font = new System.Drawing.Font("Segoe UI", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.standardBox.Location = new System.Drawing.Point(606, 0);
+            this.standardBox.Margin = new System.Windows.Forms.Padding(0);
+            this.standardBox.Name = "standardBox";
+            this.standardBox.Size = new System.Drawing.Size(119, 36);
+            this.standardBox.TabIndex = 5;
+            this.standardBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.standardBox.TextChanged += new System.EventHandler(this.standardBox_TextChanged);
             // 
             // button1
             // 
@@ -411,7 +414,7 @@
             this.dataGridView.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
             this.dataGridView.RowTemplate.Height = 25;
             this.dataGridView.ScrollBars = System.Windows.Forms.ScrollBars.None;
-            this.dataGridView.Size = new System.Drawing.Size(904, 480);
+            this.dataGridView.Size = new System.Drawing.Size(904, 425);
             this.dataGridView.TabIndex = 20;
             // 
             // groupBox1
@@ -425,7 +428,7 @@
             this.groupBox1.Controls.Add(this.btn_1);
             this.groupBox1.Controls.Add(this.preBtn);
             this.groupBox1.Controls.Add(this.firstBtn);
-            this.groupBox1.Location = new System.Drawing.Point(214, 613);
+            this.groupBox1.Location = new System.Drawing.Point(238, 608);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(562, 58);
             this.groupBox1.TabIndex = 21;
@@ -589,7 +592,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Info;
-            this.ClientSize = new System.Drawing.Size(980, 665);
+            this.ClientSize = new System.Drawing.Size(980, 672);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.dataGridView);
             this.Controls.Add(this.toDComboBox);
@@ -629,10 +632,10 @@
 
         #endregion
 
-        private TextBox textBox1;
+        private TextBox displayBox;
         private FlowLayoutPanel flowLayoutPanel1;
-        private TextBox textBox4;
-        private TextBox textBox6;
+        private TextBox uuidBox;
+        private TextBox standardBox;
         private Button button1;
         private Button searchButton;
         private Label label1;

@@ -24,6 +24,11 @@ namespace test1
     {
         string[] itemLists = { "傾斜", "気温", "湿度", "雨量", "風速", "風向", "水位" };
 
+        // KeyUUID repeater = new KeyUUID("中継器","b7fe3929");
+        // KeyUUID al_1 = new KeyUUID("AL1","f3eac1872");
+        // KeyUUID al_2 = new KeyUUID("AL2","53057b55");
+        // KeyUUID al_3 = new KeyUUID("AL3","e1103333");
+        // KeyUUID al_4 =new KeyUUID("AL4","fb2cd3bd"); 
         List<DisplayItem> display_item_list = new List<DisplayItem>();
 
         public bool is_initing = false;
@@ -32,13 +37,49 @@ namespace test1
         int per_page_count = 15;
         int current_page_group = 1;
         int current_page_index = 1;
+        string current_display_name="";
+        string current_uuid = "";
+        string current_standard="";
+
+        SQLiteConnection m_dbConnection;
+        string connection_path = "Data Source=" + Path.Combine(Directory.GetCurrentDirectory(), "rola.db");
+           
 
         public Detail()
         {
             InitializeComponent();
+
+            BaseDataAdding();
             Combos_Initing();
             AddDataTableIniting();
             AddDataTableContaining();
+        }
+
+        public void BaseDataAdding()
+        {
+            m_dbConnection = new SQLiteConnection(connection_path);
+            int sensor_setting_id=Constant.selected_uuid_index;
+            
+            try{
+                m_dbConnection.Open();                
+                var command = m_dbConnection.CreateCommand();
+                command.CommandText ="SELECT *FROM sensor_setting WHERE id = "+ sensor_setting_id.ToString();
+                using (var reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {                       
+                        current_display_name = reader.GetString(1)!=""?reader.GetString(1):"";
+                        current_uuid = reader.GetString(2) != "" ? reader.GetString(2) : "";
+                        current_standard = reader.GetValue(3).ToString();
+                        displayBox.Text=current_display_name;
+                        uuidBox.Text=current_uuid;
+                        standardBox.Text=current_standard;
+                    }
+                }
+            }catch{
+
+            }
+            m_dbConnection.Close();
         }
 
         public void AddDataTableIniting()
@@ -163,7 +204,7 @@ namespace test1
 
         private void Combos_Initing()
         {
-            for (int i = 2020; i < 2099; i++)
+            for (int i = 2020; i < 2029; i++)
             {
                 fromYComboBox.Items.Add(i.ToString());
                 toYComboBox.Items.Add(i.ToString());
@@ -263,6 +304,43 @@ namespace test1
 
         private void SearchButton_Click(object sender, EventArgs e)
         {
+            string new_uuid = uuidBox.Text;
+            string new_display_name = displayBox.Text;
+            string new_standard = standardBox.Text;
+
+            if (new_uuid==""|| new_display_name == ""|| new_standard == ""){
+                MessageBox.Show("Please input sensor datas!");
+                return;
+            }
+            float f;           
+            if (float.TryParse(new_standard, out f))
+            {
+                float roundedTemp = (float)Math.Round(decimal.Parse(new_standard), 1);
+               // Console.Write(roundedTemp);
+            }
+            else
+            {
+                MessageBox.Show("Please input as number into standard degree part!");
+                return;
+            }
+            try
+            {
+                m_dbConnection.Open();
+
+                var cmd = m_dbConnection.CreateCommand();
+                string get_sensor_setting_sql = "UPDATE sensor_setting SET display_name = '"+new_display_name+"', uuid= '"+new_uuid+"',standard_value='"+new_standard+"' WHERE id = 6";
+
+                cmd.CommandText = get_sensor_setting_sql;
+                var display_data_reader = cmd.ExecuteReader();
+                cmd.ExecuteNonQuery();
+            }
+            catch (Exception ex)
+            {
+               // MessageBox.Show(ex.Message);
+            }
+
+            m_dbConnection.Close();
+
             //searching....
             AddDataTableContaining();
         }
@@ -278,9 +356,7 @@ namespace test1
             string from_date = fromYComboBox.Text + "-" + from_month + "-" + from_day;
             string to_date = toYComboBox.Text + "-" + to_month + "-" + to_day;
 
-            SQLiteConnection m_dbConnection;
-            var connection_path = "Data Source=" + Path.Combine(Directory.GetCurrentDirectory(), "rola.db");
-            m_dbConnection = new SQLiteConnection(connection_path);
+            string selected_uuid=uuidBox.Text;
 
             try
             {
@@ -288,7 +364,9 @@ namespace test1
 
                 var cmd = m_dbConnection.CreateCommand();
                 string get_display_sql = "SELECT *FROM display WHERE datetime>'" + from_date
-                + " 00:00:00' AND datetime<'" + to_date + " 24:00:00'";
+                + " 00:00:00' AND datetime<'" + to_date + " 24:00:00' AND uuid='"+selected_uuid+ "' ORDER BY datetime";
+
+               // MessageBox.Show(get_display_sql);
 
                 //get_display_sql = "SELECT *FROM display WHERE datetime>'2022-11-29 00:00:00' AND datetime<='2022-11-29 24:00:00'";
 
@@ -379,6 +457,21 @@ namespace test1
         {
             current_page_index = 5 *  (current_page_group-1)  + 5;
             ChangePaginating(current_page_index);
+        }
+
+        private void displayBox_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void uuidBox_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void standardBox_TextChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }

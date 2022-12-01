@@ -18,6 +18,8 @@ namespace test1
         private string username;
         private string password;
 
+       
+
         public Form1()
         {
             InitializeComponent();
@@ -30,7 +32,7 @@ namespace test1
 
         public void addDataTable()
         {
-            string[] itemLists =  { "ŒXÎ", "‹C‰·", "¼“x", "‰J—Ê", "•—‘¬", "•—Œü", "…ˆÊ" };
+            string[] itemLists =  { "ï¿½Xï¿½ï¿½", "ï¿½Cï¿½ï¿½", "ï¿½ï¿½ï¿½x", "ï¿½Jï¿½ï¿½", "ï¿½ï¿½ï¿½ï¿½", "ï¿½ï¿½ï¿½ï¿½", "ï¿½ï¿½ï¿½ï¿½" };
             int row_count = 7;
 
             DataTable dt = new DataTable();
