@@ -17,6 +17,7 @@ namespace test1
         public Form1()
         {
             InitializeComponent();
+            AddDateTime();
             GetKeyUUID_Datas();
             SensorDatasView();            
         }
@@ -60,7 +61,7 @@ namespace test1
             AddDataTable(dataGridView_5,4);
         }
         public void AddDataTable(DataGridView dataGridView, int _id)
-        {
+        {            
             DataTable dt = new DataTable();
             dt.Columns.Add("ColA", typeof(string));
             dt.Columns.Add("ColB", typeof(string));   
@@ -86,50 +87,50 @@ namespace test1
                         var pressure=reader.GetString(4) != "" ? reader.GetString(4) : "";
                         var gradient=reader.GetString(5) != "" ? reader.GetString(5) : "";  
                          
-                        if(key_uuid_list[0].is_gradient) {
+                        if(key_uuid_list[_id].is_gradient) {
                             dt.Rows.Add(new object[]{itemLists[0],gradient+"°"});
                             row_count++;
                         }
-                        if(key_uuid_list[0].is_temperature) {
+                        if(key_uuid_list[_id].is_temperature) {
                             dt.Rows.Add(new object[]{itemLists[1],temperature+"℃"});
                             row_count++;
                         }
-                        if(key_uuid_list[0].is_humidity){
+                        if(key_uuid_list[_id].is_humidity){
                             dt.Rows.Add(new object[]{itemLists[2],humidity+"%"});
                             row_count++;
                         } 
-                        if(key_uuid_list[0].is_pressure){
+                        if(key_uuid_list[_id].is_pressure){
                             dt.Rows.Add(new object[]{itemLists[3],pressure+"hPa"});
                             row_count++;
                         } 
-                        if(key_uuid_list[0].is_voltage) {
+                        if(key_uuid_list[_id].is_voltage) {
                             dt.Rows.Add(new object[]{itemLists[4],voltage+"V"});
                             row_count++;
                         }
                     }
                     else
                     {
-                        if (key_uuid_list[0].is_gradient)
+                        if (key_uuid_list[_id].is_gradient)
                         {
                             dt.Rows.Add(new object[] { itemLists[0], "" });
                             row_count++;
                         }
-                        if (key_uuid_list[0].is_temperature)
+                        if (key_uuid_list[_id].is_temperature)
                         {
                             dt.Rows.Add(new object[] { itemLists[1],"" });
                             row_count++;
                         }
-                        if (key_uuid_list[0].is_humidity)
+                        if (key_uuid_list[_id].is_humidity)
                         {
                             dt.Rows.Add(new object[] { itemLists[2], "" });
                             row_count++;
                         }
-                        if (key_uuid_list[0].is_pressure)
+                        if (key_uuid_list[_id].is_pressure)
                         {
                             dt.Rows.Add(new object[] { itemLists[3], "" });
                             row_count++;
                         }
-                        if (key_uuid_list[0].is_voltage)
+                        if (key_uuid_list[_id].is_voltage)
                         {
                             dt.Rows.Add(new object[] { itemLists[4], "" });
                             row_count++;
@@ -159,7 +160,13 @@ namespace test1
                 {
                     if (reader.Read())
                     {                       
-                        var temperature= reader.GetString(0);                        
+                        var date_time= reader.GetString(0);  
+                        
+                        string day = date_time.Split(" ")[0];  
+                        string time = date_time.Split(" ")[1];                         
+                        string dis = day.Split("-")[0]+"年"+day.Split("-")[1]+"年"+day.Split("-")[2]+"日";
+                        dateLabel.Text = dis;
+                        timeLabel.Text= time;                                             
                     }
                 }
             }catch{
@@ -186,8 +193,16 @@ namespace test1
         private void button_Click(object sender, EventArgs e)
         {
             Form form2 = new Form2();
-            form2.Show();
-           // this.Hide();
+            this.Hide();
+            form2.ShowDialog();
+            this.Show();
+            GetKeyUUID_Datas();
+            this.SensorDatasView();
+            dataGridView_1.ClearSelection(); 
+            dataGridView_2.ClearSelection(); 
+            dataGridView_3.ClearSelection(); 
+            dataGridView_4.ClearSelection(); 
+            dataGridView_5.ClearSelection(); 
         }
 
         private void flowLayoutPanel1_Paint(object sender, PaintEventArgs e)

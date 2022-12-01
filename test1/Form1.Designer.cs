@@ -34,12 +34,13 @@
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
             this.button = new System.Windows.Forms.Button();
-            this.label1 = new System.Windows.Forms.Label();
+            this.dateLabel = new System.Windows.Forms.Label();
             this.dataGridView_1 = new System.Windows.Forms.DataGridView();
             this.dataGridView_2 = new System.Windows.Forms.DataGridView();
             this.dataGridView_3 = new System.Windows.Forms.DataGridView();
             this.dataGridView_4 = new System.Windows.Forms.DataGridView();
             this.dataGridView_5 = new System.Windows.Forms.DataGridView();
+            this.timeLabel = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView_1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView_2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView_3)).BeginInit();
@@ -57,15 +58,16 @@
             this.button.UseVisualStyleBackColor = true;
             this.button.Click += new System.EventHandler(this.button_Click);
             // 
-            // label1
+            // dateLabel
             // 
-            this.label1.AutoSize = true;
-            this.label1.Font = new System.Drawing.Font("Segoe UI", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.label1.Location = new System.Drawing.Point(78, 61);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(178, 60);
-            this.label1.TabIndex = 10;
-            this.label1.Text = "2022年12月10日\r\n 13:40:00";
+            this.dateLabel.AutoSize = true;
+            this.dateLabel.Font = new System.Drawing.Font("UD Digi Kyokasho NP-B", 20.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.dateLabel.ForeColor = System.Drawing.SystemColors.Highlight;
+            this.dateLabel.Location = new System.Drawing.Point(43, 61);
+            this.dateLabel.Name = "dateLabel";
+            this.dateLabel.Size = new System.Drawing.Size(247, 31);
+            this.dateLabel.TabIndex = 10;
+            this.dateLabel.Text = "2022年12月10日";
             // 
             // dataGridView_1
             // 
@@ -203,17 +205,30 @@
             this.dataGridView_5.Size = new System.Drawing.Size(203, 205);
             this.dataGridView_5.TabIndex = 13;
             // 
+            // timeLabel
+            // 
+            this.timeLabel.AutoSize = true;
+            this.timeLabel.Font = new System.Drawing.Font("UD Digi Kyokasho NK-B", 21.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.timeLabel.ForeColor = System.Drawing.SystemColors.HotTrack;
+            this.timeLabel.Location = new System.Drawing.Point(80, 104);
+            this.timeLabel.Name = "timeLabel";
+            this.timeLabel.Size = new System.Drawing.Size(163, 34);
+            this.timeLabel.TabIndex = 14;
+            this.timeLabel.Text = "13:40:00";
+            this.timeLabel.UseMnemonic = false;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(964, 591);
+            this.Controls.Add(this.timeLabel);
             this.Controls.Add(this.dataGridView_5);
             this.Controls.Add(this.dataGridView_4);
             this.Controls.Add(this.dataGridView_3);
             this.Controls.Add(this.dataGridView_2);
             this.Controls.Add(this.dataGridView_1);
-            this.Controls.Add(this.label1);
+            this.Controls.Add(this.dateLabel);
             this.Controls.Add(this.button);
             this.Name = "Form1";
             this.Text = "Form1";
@@ -230,11 +245,12 @@
 
         #endregion
         private Button button;
-        private Label label1;
+        private Label dateLabel;
         private DataGridView dataGridView_1;
         private DataGridView dataGridView_2;
         private DataGridView dataGridView_3;
         private DataGridView dataGridView_4;
         private DataGridView dataGridView_5;
+        private Label timeLabel;
     }
 }

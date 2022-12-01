@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Data.Common;
+using System.Data.SQLite;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -13,15 +15,18 @@ namespace test1
 {
     public partial class Form2 : Form
     {
-        string[] itemLists = { "傾斜", "気温", "湿度", "雨量", "風速", "風向", "水位" };
+        string[] itemLists = { "傾斜", "気温", "湿度", "気圧", "電池電圧" };
+        SQLiteConnection m_dbConnection;
+        string connection_path = "Data Source=" + Path.Combine(Directory.GetCurrentDirectory(), "rola.db");
         public Form2()
         {
             InitializeComponent();
 
+            this.ControlBox = false;
             minuteBox.Text = "10";
             secondBox.Text = "10";
-            countBox.Text = "7";
-            addDataTable(7);
+            countBox.Text = "5";
+            addDataTable(5);
         }
 
         private void openFileDialog1_FileOk(object sender, CancelEventArgs e)
@@ -53,7 +58,7 @@ namespace test1
 
         public void addDataTable(int column_count)
         {            
-            int row_count = 7;
+            int row_count = 5;
 
             DataTable dt = new DataTable();
             dt.Columns.Add("       ", typeof(string));
@@ -80,11 +85,15 @@ namespace test1
 
             dataGridView.ColumnHeadersHeight = 50;
 
-            dataGridView.Height = dataGridView.ColumnHeadersHeight + dataGridView.RowTemplate.Height * row_count;
-            dataGridView.DefaultCellStyle.Font = new Font("Arial", 13);
-            
+            dataGridView.DefaultCellStyle.SelectionBackColor = Color.Transparent;
+            dataGridView.DefaultCellStyle.SelectionForeColor = Color.Transparent;
 
-            for (int i = 0; i < column_count; i++)
+            dataGridView.Height = dataGridView.ColumnHeadersHeight + dataGridView.RowTemplate.Height * row_count;
+            dataGridView.DefaultCellStyle.Font = new Font("Arial", 15);
+            dataGridView.RowTemplate.Height=35;
+            dataGridView.Height=35+35*5;
+
+            for (int i = 0; i <= column_count; i++)
             {
                 dataGridView.Columns[i].HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
                 dataGridView.DefaultCellStyle.Alignment= DataGridViewContentAlignment.MiddleCenter;
@@ -130,7 +139,52 @@ namespace test1
 
         private void Form2_Load(object sender, EventArgs e)
         {
+            dataGridView.ClearSelection();
+        }
 
+        private void dataGridView_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+
+        }
+
+        public void GettingStatusFromTable()
+        {
+            m_dbConnection = new SQLiteConnection(connection_path);
+
+            try
+            {
+                m_dbConnection.Open();
+                var command = m_dbConnection.CreateCommand();
+               
+
+                for (int i = 1; i < 6; i++)
+                {
+                    var is_gradient = dataGridView.Rows[0].Cells[i].Value.ToString() == "True" ? "1" : "0";
+                    var is_temperature = dataGridView.Rows[1].Cells[i].Value.ToString() == "True" ? "1" : "0";
+                    var is_humidity = dataGridView.Rows[2].Cells[i].Value.ToString() == "True" ? "1" : "0";
+                    var is_pressure = dataGridView.Rows[3].Cells[i].Value.ToString() == "True" ? "1" : "0";
+                    var is_voltage = dataGridView.Rows[4].Cells[i].Value.ToString() == "True" ? "1" : "0";
+
+                    command.CommandText = "UPDATE sensor_setting SET gradient = '"+is_gradient
+                        +"', humidity= '"+is_humidity+ "',pressure='"+ is_pressure + "',temperature='"
+                        + is_temperature + "', voltage='"+is_voltage+"' WHERE id = "+i.ToString();
+                    command.ExecuteNonQuery();
+                    
+                }
+            }
+            catch
+            {
+
+            }
+            m_dbConnection.Close();            
+        }
+
+        private void closeBtn_Click(object sender, EventArgs e)
+        {
+            GettingStatusFromTable();
+           // Form form1 = new Form1();
+           // form1.Show();
+            this.Close();
         }
     }
 }
