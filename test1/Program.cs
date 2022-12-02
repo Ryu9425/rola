@@ -6,7 +6,7 @@ using System.Text.Json;
 
 namespace test1
 {
-   
+
     internal static class Program
     {
         /// <summary>
@@ -14,12 +14,15 @@ namespace test1
         /// </summary>
         /// 
         public static System.Timers.Timer timer;
+
+        public static string connection_path = "Data Source=" + Path.Combine(Directory.GetCurrentDirectory(), "rola.db");
+        public static SQLiteConnection m_dbConnection = new SQLiteConnection(connection_path);
         [STAThread]
 
         static void Main()
         {
-        // To customize application configuration such as set high DPI settings or default font,
-        // see https://aka.ms/applicationconfiguration.
+            // To customize application configuration such as set high DPI settings or default font,
+            // see https://aka.ms/applicationconfiguration.
             Thread web_thread = new Thread(WebDataThread);
             web_thread.IsBackground = true;
             web_thread.Start();
@@ -29,8 +32,9 @@ namespace test1
 
         static void WebDataThread()
         {
-            timer = new System.Timers.Timer(300000);
-            timer.Elapsed += wepDataIniting;
+            wepDataIniting(null, null);
+            timer = new System.Timers.Timer(20000);
+            // timer.Elapsed += wepDataIniting;
             timer.AutoReset = true; ;
             timer.Enabled = true;
             //  wepDataIniting();   
@@ -43,15 +47,20 @@ namespace test1
             DateTime currentTime = DateTime.Now;
             double minuts = -6;
             DateTime pre_Time = currentTime.AddMinutes(minuts);
-        
-            string start_date_time = pre_Time.ToString("yyyy-MM-dd HH:mm:ss");          
+
+            if (OpenConnection() == false) return;
+
+            // string start_date_time = pre_Time.ToString("yyyy-MM-dd HH:mm:ss");  
+            string start_date_time = GetPreDate() == "" ? pre_Time.ToString("yyyy-MM-dd HH:mm:ss")
+                                                    : GetPreDate();
+            //MessageBox.Show(start_date_time);
 
             using StringContent jsonContent = new(
                 JsonSerializer.Serialize(new
                 {
                     module = "uck9JBnekzPe",
                     datetime = start_date_time
-                    //datetime = "2022-11-26 04:45:42"
+                  //  datetime = "2022-11-30 12:02:42"
                 }),
                 Encoding.UTF8,
                 "application/json");
@@ -64,66 +73,82 @@ namespace test1
             try
             {
                 Item[] items = JsonSerializer.Deserialize<Item[]>(jsonResponse);
-                SensorDataAdding(items);
+                // SensorDataAdding(items);
                 DiaplayDataAdding(items);
             }
             catch
             {
 
-            }  
-       
+            }
+
             return;
         }
 
-        public static void SensorDataAdding(Item[] items)
+        public static bool OpenConnection()
         {
-            SQLiteConnection m_dbConnection;
-            var connection_path = "Data Source=" + Path.Combine(Directory.GetCurrentDirectory(), "rola.db");
-            m_dbConnection = new SQLiteConnection(connection_path);
-
             try
             {
                 m_dbConnection.Open();
-
-                foreach (var item in items)
-                {
-                    var cmd = m_dbConnection.CreateCommand();
-                    string check_sql = "SELECT COUNT('sensorid') FROM sensors WHERE sensorid='" + item.sensorid + "'";
-                    cmd.CommandText = check_sql;
-
-                    var exist_status_reader = cmd.ExecuteReader();
-                    while (exist_status_reader.Read())
-                    {
-                        int myreader = exist_status_reader.GetInt32(0);
-                        if (myreader == 0)
-                        {
-                            var insert_sensor_cmd = m_dbConnection.CreateCommand();
-                            string inser_sensor_sql = "INSERT INTO sensors('sensorid','uuid','data_id','data','datetime') VALUES('" + item.sensorid + "', '"
-                                + item.uuid + "', '" + item.data_id + "','" + item.data + "', '" + item.datetime + "')";
-                            insert_sensor_cmd.CommandText = inser_sensor_sql;
-                            insert_sensor_cmd.ExecuteNonQuery();
-                        }
-                    }
-                }
+                return true;
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
             }
 
-            m_dbConnection.Close();
+            return false;
+        }
+        public static string GetPreDate()
+        {
+            var date_time = "";
+
+            var cmd = m_dbConnection.CreateCommand();
+            string check_sql = "SELECT MAX(datetime) FROM display";
+            cmd.CommandText = check_sql;
+
+            var exist_status_reader = cmd.ExecuteReader();
+            if (exist_status_reader.Read())
+            {
+                date_time = exist_status_reader.GetString(0);
+            }
+            return date_time;
+        }
+
+        public static void SensorDataAdding(Item[] items)
+        {
+            foreach (var item in items)
+            {
+                var cmd = m_dbConnection.CreateCommand();
+                string check_sql = "SELECT COUNT('sensorid') FROM sensors WHERE sensorid='" + item.sensorid + "'";
+                cmd.CommandText = check_sql;
+
+                var exist_status_reader = cmd.ExecuteReader();
+                while (exist_status_reader.Read())
+                {
+                    int myreader = exist_status_reader.GetInt32(0);
+                    if (myreader == 0)
+                    {
+                        var insert_sensor_cmd = m_dbConnection.CreateCommand();
+                        string inser_sensor_sql = "INSERT INTO sensors('sensorid','uuid','data_id','data','datetime') VALUES('" + item.sensorid + "', '"
+                            + item.uuid + "', '" + item.data_id + "','" + item.data + "', '" + item.datetime + "')";
+                        insert_sensor_cmd.CommandText = inser_sensor_sql;
+                        insert_sensor_cmd.ExecuteNonQuery();
+                    }
+                }
+            }
         }
         public static void DiaplayDataAdding(Item[] items)
-        {          
-
+        {
+            // MessageBox.Show(items.Length.ToString());
             List<Item> item_list = new List<Item>();
 
             foreach (Item item in items)
             {
-                if (item_list.Count!=0 && item_list[0].uuid==item.uuid && item_list[0].datetime == item.datetime)
+                if (item_list.Count != 0 && item_list[0].uuid == item.uuid && item_list[0].datetime == item.datetime)
                 {
                     item_list.Add(item);
-                }else if (item_list.Count == 0)
+                }
+                else if (item_list.Count == 0)
                 {
                     item_list.Add(item);
                 }
@@ -132,12 +157,13 @@ namespace test1
                     DisplayDBAdding(item_list);
                     item_list.Clear();
                     item_list.Add(item);
-                }                
+                }
             }
         }
 
         public static void DisplayDBAdding(List<Item> item_list)
         {
+            //  MessageBox.Show(item_list.Count.ToString());
             string gradient = "";
             string temperature = "";
             string humidity = "";
@@ -147,60 +173,47 @@ namespace test1
             string uuid = item_list[0].uuid;
             string datetime = item_list[0].datetime;
 
-            SQLiteConnection m_dbConnection;
-            var connection_path = "Data Source=" + Path.Combine(Directory.GetCurrentDirectory(), "rola.db");
-            m_dbConnection = new SQLiteConnection(connection_path);
-
-            try
+            foreach (Item item in item_list)
             {
-                m_dbConnection.Open();
-
-                foreach (Item item in item_list)
+                if (item.data_id == "0")
                 {
-                    if (item.data_id == "0")
-                    {
-                        temperature = string.Format("{0:N2}", Int32.Parse(item.data) / 256.0f);
-                    }
-                    if (item.data_id == "1")
-                    {
-                        humidity = string.Format("{0:N2}", Int32.Parse(item.data) / 256.0f);
-                    }
-                    if (item.data_id == "2")
-                    {
-                        voltage = string.Format("{0:N3}", Int32.Parse(item.data) * 3.3f / 32767);
-                    }
-                    if (item.data_id == "3")
-                    {
-                        pressure = string.Format("{0:N2}", Int32.Parse(item.data) / 16.0f);
-                    }
-                    if (item.data_id == "4")
-                    {
-                        gradient = string.Format("{0:N1}", Int32.Parse(item.data) / 256.0f);
-                    }
+                    temperature = string.Format("{0:N2}", Int32.Parse(item.data) / 256.0f);
                 }
-                var cmd = m_dbConnection.CreateCommand();
-                string check_sql = "SELECT COUNT('id') FROM display WHERE uuid='" + uuid + "' and datetime='"+datetime+"'";
-                cmd.CommandText = check_sql;
-
-                var exist_status_reader = cmd.ExecuteReader();
-                while (exist_status_reader.Read())
+                if (item.data_id == "1")
                 {
-                    int myreader = exist_status_reader.GetInt32(0);
-                    if (myreader == 0)
-                    {
-                        var insert_display_cmd = m_dbConnection.CreateCommand();
-                        string inser_sensor_sql = "INSERT INTO display('temperature','humidity','voltage','pressure','gradient','uuid','datetime') VALUES('"
-                            + temperature + "', '" + humidity + "','" + voltage + "','" + pressure + "','" + gradient + "','" + uuid + "', '" + datetime + "')";
-                        insert_display_cmd.CommandText = inser_sensor_sql;
-                        insert_display_cmd.ExecuteNonQuery();
-                    }
-                }               
+                    humidity = string.Format("{0:N2}", Int32.Parse(item.data) / 256.0f);
+                }
+                if (item.data_id == "2")
+                {
+                    voltage = string.Format("{0:N3}", Int32.Parse(item.data) * 3.3f / 32767);
+                }
+                if (item.data_id == "3")
+                {
+                    pressure = string.Format("{0:N2}", Int32.Parse(item.data) / 16.0f);
+                }
+                if (item.data_id == "4")
+                {
+                    gradient = string.Format("{0:N1}", Int32.Parse(item.data) / 256.0f);
+                }
             }
-            catch (Exception ex)
+            var cmd = m_dbConnection.CreateCommand();
+            string check_sql = "SELECT COUNT('id') FROM display WHERE uuid='" + uuid + "' and datetime='" + datetime + "'";
+            cmd.CommandText = check_sql;
+
+            var exist_status_reader = cmd.ExecuteReader();
+            while (exist_status_reader.Read())
             {
-                MessageBox.Show(ex.Message);
+                int myreader = exist_status_reader.GetInt32(0);
+                if (myreader == 0)
+                {
+                    var insert_display_cmd = m_dbConnection.CreateCommand();
+                    string inser_sensor_sql = "INSERT INTO display('temperature','humidity','voltage','pressure','gradient','uuid','datetime') VALUES('"
+                        + temperature + "', '" + humidity + "','" + voltage + "','" + pressure + "','" + gradient + "','" + uuid + "', '" + datetime + "')";
+                
+                    insert_display_cmd.CommandText = inser_sensor_sql;
+                    insert_display_cmd.ExecuteNonQuery();                   
+                }
             }
-            m_dbConnection.Close();            
         }
     }
 }

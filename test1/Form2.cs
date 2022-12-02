@@ -18,6 +18,9 @@ namespace test1
         string[] itemLists = { "傾斜", "気温", "湿度", "気圧", "電池電圧" };
         SQLiteConnection m_dbConnection;
         string connection_path = "Data Source=" + Path.Combine(Directory.GetCurrentDirectory(), "rola.db");
+
+        public List<KeyUUID> key_uuid_list = new List<KeyUUID>();
+
         public Form2()
         {
             InitializeComponent();
@@ -26,7 +29,9 @@ namespace test1
             minuteBox.Text = "10";
             secondBox.Text = "10";
             countBox.Text = "5";
-            addDataTable(5);
+            key_uuid_list = Constant.key_uuid_list;
+            // MessageBox.Show(key_uuid_list.Count.ToString());
+            addDataTable(6);
         }
 
         private void openFileDialog1_FileOk(object sender, CancelEventArgs e)
@@ -36,50 +41,51 @@ namespace test1
 
         private void button1_Click(object sender, EventArgs e)
         {
-            string url_text = "";          
+            string url_text = "";
             DialogResult result = this.folderBrowserDialog.ShowDialog();
-            if(result == DialogResult.OK)
-            { 
+            if (result == DialogResult.OK)
+            {
                 url_text = this.folderBrowserDialog.SelectedPath;
-               // MessageBox.Show(url_text);
+                // MessageBox.Show(url_text);
                 this.urlBox.Text = url_text;
             }
         }
 
         private void countBox_TextChanged(object sender, EventArgs e)
         {
-            string count = countBox.Text;
-            int val = 0;            
-            if (Int32.TryParse(count, out val)){
-                int column_count = Convert.ToInt32(count);
-                addDataTable(column_count);
-            }
+            // string count = countBox.Text;
+            // int val = 0;
+            // if (Int32.TryParse(count, out val))
+            // {
+            //     int column_count = Convert.ToInt32(count);
+            //     addDataTable(column_count);
+            // }
         }
 
         public void addDataTable(int column_count)
-        {            
+        {
             int row_count = 5;
 
             DataTable dt = new DataTable();
             dt.Columns.Add("       ", typeof(string));
             dt.Columns.Add("e6f4cc1", typeof(bool));
 
-            for (int i= 1; i <column_count; i++)
+            for (int i = 2; i < column_count; i++)
             {
-                dt.Columns.Add("ID"+i.ToString(), typeof(bool));
+                dt.Columns.Add("ID" + i.ToString(), typeof(bool));
             }
-            
-            for (int i=0; i <row_count; i++)
+
+            for (int i = 0; i < row_count; i++)
             {
                 dt.Rows.Add(create_row_obj(i, column_count));
-            }    
+            }
 
             dataGridView.DataSource = dt;
             dataGridView.RowHeadersVisible = false;
-            dataGridView.Columns[0].ReadOnly =true;            
+            dataGridView.Columns[0].ReadOnly = true;
             dataGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dataGridView.AllowUserToAddRows = false;
-            dataGridView.ScrollBars = ScrollBars.None;            
+            dataGridView.ScrollBars = ScrollBars.None;
             dataGridView.Columns[0].SortMode = DataGridViewColumnSortMode.NotSortable;
             dataGridView.Columns[1].SortMode = DataGridViewColumnSortMode.NotSortable;
 
@@ -90,13 +96,13 @@ namespace test1
 
             dataGridView.Height = dataGridView.ColumnHeadersHeight + dataGridView.RowTemplate.Height * row_count;
             dataGridView.DefaultCellStyle.Font = new Font("Arial", 15);
-            dataGridView.RowTemplate.Height=35;
-            dataGridView.Height=35+35*5;
+            dataGridView.RowTemplate.Height = 35;
+            dataGridView.Height = 35 + 35 * 5;
 
-            for (int i = 0; i <= column_count; i++)
+            for (int i = 0; i < column_count; i++)
             {
                 dataGridView.Columns[i].HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
-                dataGridView.DefaultCellStyle.Alignment= DataGridViewContentAlignment.MiddleCenter;
+                dataGridView.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
             }
         }
 
@@ -104,10 +110,47 @@ namespace test1
         {
             object[] objs = new object[column_count];
             objs[0] = itemLists[row_number];
-            for(int i = 1; i < column_count ; i++)
+            if (row_number == 0)
             {
-                objs[i]=false;
+                objs[1] = key_uuid_list[0].is_gradient;
+                objs[2] = key_uuid_list[1].is_gradient;
+                objs[3] = key_uuid_list[2].is_gradient;
+                objs[4] = key_uuid_list[3].is_gradient;
+                objs[5] = key_uuid_list[4].is_gradient;
             }
+            else if (row_number == 1)
+            {
+                objs[1] = key_uuid_list[0].is_temperature;
+                objs[2] = key_uuid_list[1].is_temperature;
+                objs[3] = key_uuid_list[2].is_temperature;
+                objs[4] = key_uuid_list[3].is_temperature;
+                objs[5] = key_uuid_list[4].is_temperature;
+            }
+            else if (row_number == 2)
+            {
+                objs[1] = key_uuid_list[0].is_humidity;
+                objs[2] = key_uuid_list[1].is_humidity;
+                objs[3] = key_uuid_list[2].is_humidity;
+                objs[4] = key_uuid_list[3].is_humidity;
+                objs[5] = key_uuid_list[4].is_humidity;
+            }
+            else if (row_number == 3)
+            {
+                objs[1] = key_uuid_list[0].is_pressure;
+                objs[2] = key_uuid_list[1].is_pressure;
+                objs[3] = key_uuid_list[2].is_pressure;
+                objs[4] = key_uuid_list[3].is_pressure;
+                objs[5] = key_uuid_list[4].is_pressure;
+            }
+            else if (row_number == 4)
+            {
+                objs[1] = key_uuid_list[0].is_voltage;
+                objs[2] = key_uuid_list[1].is_voltage;
+                objs[3] = key_uuid_list[2].is_voltage;
+                objs[4] = key_uuid_list[3].is_voltage;
+                objs[5] = key_uuid_list[4].is_voltage;
+            }
+
             return objs;
         }
 
@@ -120,7 +163,7 @@ namespace test1
             }
             else
             {
-                minuteBox.Text = "";                    
+                minuteBox.Text = "";
             }
         }
 
@@ -155,7 +198,7 @@ namespace test1
             {
                 m_dbConnection.Open();
                 var command = m_dbConnection.CreateCommand();
-               
+
 
                 for (int i = 1; i < 6; i++)
                 {
@@ -165,25 +208,25 @@ namespace test1
                     var is_pressure = dataGridView.Rows[3].Cells[i].Value.ToString() == "True" ? "1" : "0";
                     var is_voltage = dataGridView.Rows[4].Cells[i].Value.ToString() == "True" ? "1" : "0";
 
-                    command.CommandText = "UPDATE sensor_setting SET gradient = '"+is_gradient
-                        +"', humidity= '"+is_humidity+ "',pressure='"+ is_pressure + "',temperature='"
-                        + is_temperature + "', voltage='"+is_voltage+"' WHERE id = "+i.ToString();
+                    command.CommandText = "UPDATE sensor_setting SET gradient = '" + is_gradient
+                        + "', humidity= '" + is_humidity + "',pressure='" + is_pressure + "',temperature='"
+                        + is_temperature + "', voltage='" + is_voltage + "' WHERE id = " + i.ToString();
                     command.ExecuteNonQuery();
-                    
+
                 }
             }
             catch
             {
 
             }
-            m_dbConnection.Close();            
+            m_dbConnection.Close();
         }
 
         private void closeBtn_Click(object sender, EventArgs e)
         {
             GettingStatusFromTable();
-           // Form form1 = new Form1();
-           // form1.Show();
+            // Form form1 = new Form1();
+            // form1.Show();
             this.Close();
         }
     }

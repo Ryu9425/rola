@@ -123,6 +123,7 @@
             this.dataGridView_2.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dataGridView_2.Size = new System.Drawing.Size(205, 205);
             this.dataGridView_2.TabIndex = 1;
+      
             // 
             // dataGridView_3
             // 
@@ -150,6 +151,7 @@
             this.dataGridView_3.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dataGridView_3.Size = new System.Drawing.Size(205, 205);
             this.dataGridView_3.TabIndex = 11;
+          
             // 
             // dataGridView_4
             // 
@@ -177,7 +179,7 @@
             this.dataGridView_4.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dataGridView_4.Size = new System.Drawing.Size(203, 205);
             this.dataGridView_4.TabIndex = 12;
-            // 
+           // 
             // dataGridView_5
             // 
             this.dataGridView_5.AllowUserToAddRows = false;

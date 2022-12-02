@@ -41,8 +41,8 @@ namespace test1
         string current_uuid = "";
         string current_standard="";
 
-        SQLiteConnection m_dbConnection;
-        string connection_path = "Data Source=" + Path.Combine(Directory.GetCurrentDirectory(), "rola.db");
+       // SQLiteConnection m_dbConnection;
+      //  string connection_path = "Data Source=" + Path.Combine(Directory.GetCurrentDirectory(), "rola.db");
            
 
         public Detail()
@@ -57,12 +57,12 @@ namespace test1
 
         public void BaseDataAdding()
         {
-            m_dbConnection = new SQLiteConnection(connection_path);
+          //  m_dbConnection = new SQLiteConnection(connection_path);
             int sensor_setting_id=Constant.selected_uuid_index;
             
             try{
-                m_dbConnection.Open();                
-                var command = m_dbConnection.CreateCommand();
+             //   m_dbConnection.Open();                
+                var command = Program.m_dbConnection.CreateCommand();
                 command.CommandText ="SELECT *FROM sensor_setting WHERE id = "+ sensor_setting_id.ToString();
                 using (var reader = command.ExecuteReader())
                 {
@@ -79,7 +79,7 @@ namespace test1
             }catch{
 
             }
-            m_dbConnection.Close();
+           // m_dbConnection.Close();
         }
 
         public void AddDataTableIniting()
@@ -325,13 +325,13 @@ namespace test1
             }
             try
             {
-                m_dbConnection.Open();
+             //   m_dbConnection.Open();
 
-                var cmd = m_dbConnection.CreateCommand();
-                string get_sensor_setting_sql = "UPDATE sensor_setting SET display_name = '"+new_display_name+"', uuid= '"+new_uuid+"',standard_value='"+new_standard+"' WHERE id = 6";
+                var cmd = Program.m_dbConnection.CreateCommand();
+                string get_sensor_setting_sql = "UPDATE sensor_setting SET display_name = '"+new_display_name+"', uuid= '"+new_uuid+"',standard_value='"+new_standard+"' WHERE id ="+Constant.selected_uuid_index;
 
                 cmd.CommandText = get_sensor_setting_sql;
-                var display_data_reader = cmd.ExecuteReader();
+              //  var display_data_reader = cmd.ExecuteReader();
                 cmd.ExecuteNonQuery();
             }
             catch (Exception ex)
@@ -339,7 +339,7 @@ namespace test1
                // MessageBox.Show(ex.Message);
             }
 
-            m_dbConnection.Close();
+           // m_dbConnection.Close();
 
             //searching....
             AddDataTableContaining();
@@ -360,9 +360,9 @@ namespace test1
 
             try
             {
-                m_dbConnection.Open();
+               // m_dbConnection.Open();
 
-                var cmd = m_dbConnection.CreateCommand();
+                var cmd = Program.m_dbConnection.CreateCommand();
                 string get_display_sql = "SELECT *FROM display WHERE datetime>'" + from_date
                 + " 00:00:00' AND datetime<'" + to_date + " 24:00:00' AND uuid='"+selected_uuid+ "' ORDER BY datetime";
 
@@ -394,7 +394,7 @@ namespace test1
                 MessageBox.Show(ex.Message);
             }
 
-            m_dbConnection.Close();
+          //  m_dbConnection.Close();
         }
 
         private void firstBtn_Click(object sender, EventArgs e)
