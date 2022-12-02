@@ -25,7 +25,7 @@ namespace test1
         string[] itemLists = { "傾斜", "気温", "湿度", "雨量", "風速", "風向", "水位" };
 
         // KeyUUID repeater = new KeyUUID("中継器","b7fe3929");
-        // KeyUUID al_1 = new KeyUUID("AL1","f3eac1872");
+        // KeyUUID al_1 = new KeyUUID("AL1","f3eac187");
         // KeyUUID al_2 = new KeyUUID("AL2","53057b55");
         // KeyUUID al_3 = new KeyUUID("AL3","e1103333");
         // KeyUUID al_4 =new KeyUUID("AL4","fb2cd3bd"); 
@@ -41,10 +41,6 @@ namespace test1
         string current_uuid = "";
         string current_standard="";
 
-       // SQLiteConnection m_dbConnection;
-      //  string connection_path = "Data Source=" + Path.Combine(Directory.GetCurrentDirectory(), "rola.db");
-           
-
         public Detail()
         {
             InitializeComponent();
@@ -57,11 +53,9 @@ namespace test1
 
         public void BaseDataAdding()
         {
-          //  m_dbConnection = new SQLiteConnection(connection_path);
             int sensor_setting_id=Constant.selected_uuid_index;
             
-            try{
-             //   m_dbConnection.Open();                
+            try{              
                 var command = Program.m_dbConnection.CreateCommand();
                 command.CommandText ="SELECT *FROM sensor_setting WHERE id = "+ sensor_setting_id.ToString();
                 using (var reader = command.ExecuteReader())
@@ -79,7 +73,6 @@ namespace test1
             }catch{
 
             }
-           // m_dbConnection.Close();
         }
 
         public void AddDataTableIniting()
@@ -121,12 +114,9 @@ namespace test1
             ChangePaginating(current_page_index);
             Paginator_Buttons_Control();
 
-            // for (int i = 0; i < total_items_count; i++)
-            // {
-            //     dt.Rows.Add(create_row_obj(i));
-            // }
-            dataGridView.Height = dataGridView.ColumnHeadersHeight + dataGridView.RowTemplate.Height * 15 + 15;
+            dataGridView.Height = dataGridView.ColumnHeadersHeight + dataGridView.RowTemplate.Height * 15 + 22;
             dataGridView.DefaultCellStyle.Font = new Font("Arial", 14);
+            dataGridView.ClearSelection();
         }
 
         public void ChangePaginating(int page_index)
@@ -195,7 +185,10 @@ namespace test1
             objs[1] = display_item_list[row_number].temperature;
             objs[2] = display_item_list[row_number].humidity;
             objs[3] = display_item_list[row_number].pressure;
-            objs[4] = display_item_list[row_number].gradient;
+
+            decimal diff_gradient = Math.Round(decimal.Parse(standardBox.Text), 1) - Math.Round(decimal.Parse( display_item_list[row_number].gradient), 1);
+
+            objs[4] = diff_gradient;
             objs[5] = display_item_list[row_number].voltage;
 
             return objs;
@@ -255,6 +248,7 @@ namespace test1
             {
                 fromDComboBox.Items.Add(i.ToString());
             }
+            fromDComboBox.Text="1";
         }
         public void Add_today_combo()
         {
@@ -299,7 +293,6 @@ namespace test1
         private void ToDComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             //filtering...
-
         }
 
         private void SearchButton_Click(object sender, EventArgs e)
@@ -316,7 +309,6 @@ namespace test1
             if (float.TryParse(new_standard, out f))
             {
                 float roundedTemp = (float)Math.Round(decimal.Parse(new_standard), 1);
-               // Console.Write(roundedTemp);
             }
             else
             {
@@ -325,21 +317,16 @@ namespace test1
             }
             try
             {
-             //   m_dbConnection.Open();
-
                 var cmd = Program.m_dbConnection.CreateCommand();
                 string get_sensor_setting_sql = "UPDATE sensor_setting SET display_name = '"+new_display_name+"', uuid= '"+new_uuid+"',standard_value='"+new_standard+"' WHERE id ="+Constant.selected_uuid_index;
 
                 cmd.CommandText = get_sensor_setting_sql;
-              //  var display_data_reader = cmd.ExecuteReader();
                 cmd.ExecuteNonQuery();
             }
             catch (Exception ex)
             {
                // MessageBox.Show(ex.Message);
             }
-
-           // m_dbConnection.Close();
 
             //searching....
             AddDataTableContaining();
@@ -360,15 +347,9 @@ namespace test1
 
             try
             {
-               // m_dbConnection.Open();
-
                 var cmd = Program.m_dbConnection.CreateCommand();
                 string get_display_sql = "SELECT *FROM display WHERE datetime>'" + from_date
                 + " 00:00:00' AND datetime<'" + to_date + " 24:00:00' AND uuid='"+selected_uuid+ "' ORDER BY datetime";
-
-               // MessageBox.Show(get_display_sql);
-
-                //get_display_sql = "SELECT *FROM display WHERE datetime>'2022-11-29 00:00:00' AND datetime<='2022-11-29 24:00:00'";
 
                 cmd.CommandText = get_display_sql;
 
@@ -393,8 +374,6 @@ namespace test1
             {
                 MessageBox.Show(ex.Message);
             }
-
-          //  m_dbConnection.Close();
         }
 
         private void firstBtn_Click(object sender, EventArgs e)

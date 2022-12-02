@@ -16,8 +16,6 @@ namespace test1
     public partial class Form2 : Form
     {
         string[] itemLists = { "傾斜", "気温", "湿度", "気圧", "電池電圧" };
-        SQLiteConnection m_dbConnection;
-        string connection_path = "Data Source=" + Path.Combine(Directory.GetCurrentDirectory(), "rola.db");
 
         public List<KeyUUID> key_uuid_list = new List<KeyUUID>();
 
@@ -26,11 +24,8 @@ namespace test1
             InitializeComponent();
 
             this.ControlBox = false;
-            minuteBox.Text = "10";
-            secondBox.Text = "10";
-            countBox.Text = "5";
             key_uuid_list = Constant.key_uuid_list;
-            // MessageBox.Show(key_uuid_list.Count.ToString());
+            DisplayMainSetting();
             addDataTable(6);
         }
 
@@ -192,13 +187,9 @@ namespace test1
 
         public void GettingStatusFromTable()
         {
-            m_dbConnection = new SQLiteConnection(connection_path);
-
             try
             {
-                m_dbConnection.Open();
-                var command = m_dbConnection.CreateCommand();
-
+                var command = Program.m_dbConnection.CreateCommand();
 
                 for (int i = 1; i < 6; i++)
                 {
@@ -219,14 +210,95 @@ namespace test1
             {
 
             }
-            m_dbConnection.Close();
+        }
+
+        public bool CheckParseStrToInt(string _str)
+        {
+            int t;
+            if (Int32.TryParse(_str, out t))
+            {
+                return true;
+            }
+            return false;
+        }
+
+        private void DisplayMainSetting()
+        {
+            try
+            {
+                var command = Program.m_dbConnection.CreateCommand();
+                command.CommandText = "SELECT *FROM main_setting";
+                command.ExecuteNonQuery();
+                var reader = command.ExecuteReader();
+                if (reader.Read())
+                {
+                    apiBox.Text = reader.GetString(1);
+                    minuteBox.Text = reader.GetInt32(2).ToString();
+                    secondBox.Text = reader.GetInt32(3).ToString();
+                    urlBox.Text = reader.GetString(4).ToString();
+                    countBox.Text = reader.GetInt32(5).ToString();
+                }
+            }
+            catch (System.Exception)
+            {
+                throw;
+            }
+        }
+
+        private void dataGridView1_CellPainting(object sender, DataGridViewCellPaintingEventArgs e)
+        {
+            if (e.ColumnIndex == 1 && e.RowIndex >= 0)
+            {
+                e.PaintBackground(e.CellBounds, true);
+                ControlPaint.DrawCheckBox(e.Graphics, e.CellBounds.X + 1, e.CellBounds.Y + 1,
+                    e.CellBounds.Width - 2, e.CellBounds.Height - 2,
+                    (bool)e.FormattedValue ? ButtonState.Checked : ButtonState.Normal);
+                e.Handled = true;
+            }
+        }
+
+        private void StoreMainSetting()
+        {
+            string web_api = apiBox.Text;
+            string diff_minute = minuteBox.Text;
+            string diff_second = secondBox.Text;
+            string uuid_count = countBox.Text;
+            string store_path = urlBox.Text;
+
+            if (CheckParseStrToInt(diff_minute) == false || CheckParseStrToInt(diff_second) == false
+                || CheckParseStrToInt(uuid_count) == false)
+            {
+                MessageBox.Show("Please Input number in minute, second, count fields");
+                return;
+            }
+
+            if (web_api == "" || CheckParseStrToInt(diff_second) == false
+                || CheckParseStrToInt(uuid_count) == false)
+            {
+                MessageBox.Show("Please Input number in minute, second, count fields");
+                return;
+            }
+
+            try
+            {
+                var command = Program.m_dbConnection.CreateCommand();
+                string update_sql = "UPDATE main_setting SET  api_url='" + web_api + "',connection_time = " + diff_minute
+                      + ", connection_interval= " + diff_second + ",store_url='" + store_path + "',display_count=" + uuid_count;
+
+                command.CommandText = update_sql;
+                command.ExecuteNonQuery();
+            }
+            catch (System.Exception)
+            {
+                throw;
+            }
         }
 
         private void closeBtn_Click(object sender, EventArgs e)
         {
+            StoreMainSetting();
             GettingStatusFromTable();
-            // Form form1 = new Form1();
-            // form1.Show();
+
             this.Close();
         }
     }

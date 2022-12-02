@@ -414,7 +414,7 @@
             this.dataGridView.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
             this.dataGridView.RowTemplate.Height = 25;
             this.dataGridView.ScrollBars = System.Windows.Forms.ScrollBars.None;
-            this.dataGridView.Size = new System.Drawing.Size(904, 425);
+            this.dataGridView.Size = new System.Drawing.Size(904, 441);
             this.dataGridView.TabIndex = 20;
             // 
             // groupBox1
@@ -428,7 +428,7 @@
             this.groupBox1.Controls.Add(this.btn_1);
             this.groupBox1.Controls.Add(this.preBtn);
             this.groupBox1.Controls.Add(this.firstBtn);
-            this.groupBox1.Location = new System.Drawing.Point(238, 608);
+            this.groupBox1.Location = new System.Drawing.Point(238, 616);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(562, 58);
             this.groupBox1.TabIndex = 21;

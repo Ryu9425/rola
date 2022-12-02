@@ -50,11 +50,11 @@
             // 
             // button
             // 
-            this.button.Location = new System.Drawing.Point(866, 27);
+            this.button.Location = new System.Drawing.Point(873, 34);
             this.button.Name = "button";
-            this.button.Size = new System.Drawing.Size(70, 62);
+            this.button.Size = new System.Drawing.Size(61, 58);
             this.button.TabIndex = 8;
-            this.button.Text = "Submit";
+            this.button.Text = "Setting";
             this.button.UseVisualStyleBackColor = true;
             this.button.Click += new System.EventHandler(this.button_Click);
             // 
@@ -123,7 +123,7 @@
             this.dataGridView_2.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dataGridView_2.Size = new System.Drawing.Size(205, 205);
             this.dataGridView_2.TabIndex = 1;
-      
+            this.dataGridView_2.CellContentDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView_2_CellContentClick);
             // 
             // dataGridView_3
             // 
@@ -151,7 +151,7 @@
             this.dataGridView_3.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dataGridView_3.Size = new System.Drawing.Size(205, 205);
             this.dataGridView_3.TabIndex = 11;
-          
+            this.dataGridView_3.CellContentDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView_3_CellContentClick);
             // 
             // dataGridView_4
             // 
@@ -179,7 +179,8 @@
             this.dataGridView_4.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dataGridView_4.Size = new System.Drawing.Size(203, 205);
             this.dataGridView_4.TabIndex = 12;
-           // 
+            this.dataGridView_4.CellContentDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView_4_CellContentClick);
+            // 
             // dataGridView_5
             // 
             this.dataGridView_5.AllowUserToAddRows = false;
@@ -206,6 +207,7 @@
             this.dataGridView_5.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dataGridView_5.Size = new System.Drawing.Size(203, 205);
             this.dataGridView_5.TabIndex = 13;
+            this.dataGridView_5.CellContentDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView_5_CellContentClick);
             // 
             // timeLabel
             // 

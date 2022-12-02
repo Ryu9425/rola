@@ -9,9 +9,7 @@ using System.Xml.Linq;
 namespace test1
 {
     public partial class Form1 : Form
-    {
-        SQLiteConnection m_dbConnection;
-        string connection_path = "Data Source=" + Path.Combine(Directory.GetCurrentDirectory(), "rola.db");
+    {       
         string[] itemLists = { "傾斜", "気温", "湿度", "気圧", "電池電圧" };
 
         List<KeyUUID> key_uuid_list = new List<KeyUUID>();
@@ -25,12 +23,9 @@ namespace test1
 
         public void GetKeyUUID_Datas()
         {
-            m_dbConnection = new SQLiteConnection(connection_path);
-
             try
             {
-                m_dbConnection.Open();
-                var command = m_dbConnection.CreateCommand();
+                var command = Program.m_dbConnection.CreateCommand();
                 command.CommandText = "SELECT *FROM sensor_setting ORDER BY id";
                 using (var reader = command.ExecuteReader())
                 {
@@ -55,7 +50,6 @@ namespace test1
             {
             }
             Constant.key_uuid_list = key_uuid_list;
-            m_dbConnection.Close();
         }
 
         public void SensorDatasView()
@@ -71,8 +65,6 @@ namespace test1
             DataTable dt = new DataTable();
             dt.Columns.Add("ColA", typeof(string));
             dt.Columns.Add("ColB", typeof(string));
-
-            m_dbConnection = new SQLiteConnection(connection_path);
             string uuid = key_uuid_list[_id].uuid;
             int row_count = 0;
             //  MessageBox.Show(uuid);
@@ -81,7 +73,6 @@ namespace test1
 
             try
             {
-              //  m_dbConnection.Open();
                 var command = Program.m_dbConnection.CreateCommand();
                 command.CommandText = "SELECT *FROM display WHERE uuid='" + uuid + "' ORDER BY datetime DESC";
 
@@ -98,7 +89,7 @@ namespace test1
 
                         if (key_uuid_list[_id].is_gradient)
                         {
-                            float diff_gradient = (float)Math.Round(decimal.Parse(key_uuid_list[_id].standard), 1) - (float)Math.Round(decimal.Parse(gradient), 1);
+                            decimal diff_gradient = Math.Round(decimal.Parse(key_uuid_list[_id].standard), 1) - Math.Round(decimal.Parse(gradient), 1);
                             dt.Rows.Add(new object[] { itemLists[0], diff_gradient.ToString() + "°" });
                             row_count++;
                         }
@@ -157,7 +148,6 @@ namespace test1
             {
 
             }
-            m_dbConnection.Close();
 
             dataGridView.DataSource = dt;
             dataGridView.Height = 35 * row_count;
@@ -166,12 +156,9 @@ namespace test1
 
         public void AddDateTime()
         {
-            m_dbConnection = new SQLiteConnection(connection_path);
-
             try
             {
-                m_dbConnection.Open();
-                var command = m_dbConnection.CreateCommand();
+                var command = Program.m_dbConnection.CreateCommand();
                 command.CommandText = "SELECT MAX(datetime) FROM display";
 
                 using (var reader = command.ExecuteReader())
@@ -190,9 +177,7 @@ namespace test1
             }
             catch
             {
-
             }
-            m_dbConnection.Close();
         }
 
         private void DataGridViewStyiling(DataGridView dataGridView)
@@ -249,16 +234,76 @@ namespace test1
             this.Hide();
             detail.ShowDialog();
             this.Show();
-            AddDateTime();
-            GetKeyUUID_Datas();
+            this.AddDateTime();
+            this.GetKeyUUID_Datas();
             this.SensorDatasView();
+            this.AllClearSelection();
+        }
+
+        public void AllClearSelection()
+        { 
             dataGridView_1.ClearSelection();
             dataGridView_2.ClearSelection();
             dataGridView_3.ClearSelection();
             dataGridView_4.ClearSelection();
             dataGridView_5.ClearSelection();
-
         }
 
+
+        private void dataGridView_3_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+            dataGridView_1.ClearSelection();
+            Constant.selected_uuid_index = 3;
+            Form detail = new Detail();
+            this.Hide();
+            detail.ShowDialog();
+            this.Show();
+            this.AddDateTime();
+            this.GetKeyUUID_Datas();
+            this.SensorDatasView();
+            this.AllClearSelection();
+        }
+
+        private void dataGridView_2_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+            dataGridView_1.ClearSelection();
+            Constant.selected_uuid_index = 2;
+            Form detail = new Detail();
+            this.Hide();
+            detail.ShowDialog();
+            this.Show();
+            this.AddDateTime();
+            this.GetKeyUUID_Datas();
+            this.SensorDatasView();
+            this.AllClearSelection();
+        }
+
+        private void dataGridView_4_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+            dataGridView_1.ClearSelection();
+            Constant.selected_uuid_index = 4;
+            Form detail = new Detail();
+            this.Hide();
+            detail.ShowDialog();
+            this.Show();
+            this.AddDateTime();
+            this.GetKeyUUID_Datas();
+            this.SensorDatasView();
+            this.AllClearSelection();
+        }
+
+        private void dataGridView_5_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+            dataGridView_1.ClearSelection();
+            Constant.selected_uuid_index = 5;
+            Form detail = new Detail();
+            this.Hide();
+            detail.ShowDialog();
+            this.Show();
+            this.AddDateTime();
+            this.GetKeyUUID_Datas();
+            this.SensorDatasView();
+            this.AllClearSelection();
+        }
     }
 }

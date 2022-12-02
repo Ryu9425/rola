@@ -211,9 +211,11 @@
             // 
             // closeBtn
             // 
-            this.closeBtn.Location = new System.Drawing.Point(805, 39);
+            this.closeBtn.ForeColor = System.Drawing.SystemColors.HighlightText;
+            this.closeBtn.Image = global::test1.Properties.Resources._21;
+            this.closeBtn.Location = new System.Drawing.Point(811, 36);
             this.closeBtn.Name = "closeBtn";
-            this.closeBtn.Size = new System.Drawing.Size(75, 28);
+            this.closeBtn.Size = new System.Drawing.Size(63, 49);
             this.closeBtn.TabIndex = 17;
             this.closeBtn.Text = "Close";
             this.closeBtn.UseVisualStyleBackColor = true;

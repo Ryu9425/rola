@@ -33,11 +33,10 @@ namespace test1
         static void WebDataThread()
         {
             wepDataIniting(null, null);
-            timer = new System.Timers.Timer(20000);
-            // timer.Elapsed += wepDataIniting;
+            timer = new System.Timers.Timer(300000);
+            timer.Elapsed += wepDataIniting;
             timer.AutoReset = true; ;
             timer.Enabled = true;
-            //  wepDataIniting();   
         }
 
         public static async void wepDataIniting(object sender, EventArgs e)
@@ -60,11 +59,14 @@ namespace test1
                 {
                     module = "uck9JBnekzPe",
                     datetime = start_date_time
-                  //  datetime = "2022-11-30 12:02:42"
+                    //  datetime = "2022-11-30 12:02:42"
                 }),
                 Encoding.UTF8,
                 "application/json");
-            Console.WriteLine(jsonContent);
+
+            string web_api = GetWebApi();
+
+           // using HttpResponseMessage response = await client.PostAsync(web_api, jsonContent);
             using HttpResponseMessage response = await client.PostAsync("https://collapse.sakura.ne.jp/getstream.php", jsonContent);
 
             response.EnsureSuccessStatusCode();
@@ -98,6 +100,21 @@ namespace test1
 
             return false;
         }
+
+         public static bool CloseConnection()
+        {
+            try
+            {
+                m_dbConnection.Close();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+
+            return false;
+        }
         public static string GetPreDate()
         {
             var date_time = "";
@@ -112,6 +129,24 @@ namespace test1
                 date_time = exist_status_reader.GetString(0);
             }
             return date_time;
+        }
+        public static string GetWebApi()
+        {
+            var web_api = "";
+
+            var cmd = m_dbConnection.CreateCommand();
+            cmd.CommandText = "SELECT *FROM main_setting";
+            cmd.ExecuteNonQuery();
+            var reader = cmd.ExecuteReader();
+            if (reader.Read())
+            {
+                web_api = reader.GetString(1);
+                // minuteBox.Text = reader.GetInt32(2).ToString();
+                // secondBox.Text = reader.GetInt32(3).ToString();
+                // folderBrowserDialog.SelectedPath = reader.GetString(4).ToString();
+                // countBox.Text = reader.GetInt32(5).ToString();
+            }
+            return web_api;
         }
 
         public static void SensorDataAdding(Item[] items)
@@ -209,9 +244,9 @@ namespace test1
                     var insert_display_cmd = m_dbConnection.CreateCommand();
                     string inser_sensor_sql = "INSERT INTO display('temperature','humidity','voltage','pressure','gradient','uuid','datetime') VALUES('"
                         + temperature + "', '" + humidity + "','" + voltage + "','" + pressure + "','" + gradient + "','" + uuid + "', '" + datetime + "')";
-                
+
                     insert_display_cmd.CommandText = inser_sensor_sql;
-                    insert_display_cmd.ExecuteNonQuery();                   
+                    insert_display_cmd.ExecuteNonQuery();
                 }
             }
         }
