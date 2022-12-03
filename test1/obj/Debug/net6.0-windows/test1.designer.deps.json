@@ -69,6 +69,7 @@
       },
       "Microsoft.CSharp/4.7.0": {},
       "Microsoft.NETCore.Platforms/3.1.0": {},
+      "Microsoft.NETFramework.ReferenceAssemblies.net45/1.0.3": {},
       "Microsoft.Win32.Registry/4.7.0": {
         "dependencies": {
           "System.Security.AccessControl": "4.7.0",
@@ -488,6 +489,13 @@
       "sha512": "sha512-z7aeg8oHln2CuNulfhiLYxCVMPEwBl3rzicjvIX+4sUuCwvXw5oXQEtbiU2c0z4qYL5L3Kmx0mMA/+t/SbY67w==",
       "path": "microsoft.netcore.platforms/3.1.0",
       "hashPath": "microsoft.netcore.platforms.3.1.0.nupkg.sha512"
+    },
+    "Microsoft.NETFramework.ReferenceAssemblies.net45/1.0.3": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-dcSLNuUX2rfZejsyta2EWZ1W5U6ucbFt697lRg1qiTlTM5ZlYv4uAvuxE6ROy6xLWWhLhOaReCDxkhxcajRYtQ==",
+      "path": "microsoft.netframework.referenceassemblies.net45/1.0.3",
+      "hashPath": "microsoft.netframework.referenceassemblies.net45.1.0.3.nupkg.sha512"
     },
     "Microsoft.Win32.Registry/4.7.0": {
       "type": "package",

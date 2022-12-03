@@ -26,6 +26,9 @@ namespace test1
             Thread web_thread = new Thread(WebDataThread);
             web_thread.IsBackground = true;
             web_thread.Start();
+            while(!OpenConnection()) {
+                OpenConnection();
+            }
             ApplicationConfiguration.Initialize();
             Application.Run(new Form1());
         }
@@ -95,7 +98,7 @@ namespace test1
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message);
+              //  MessageBox.Show(ex.Message);
             }
 
             return false;
@@ -110,7 +113,7 @@ namespace test1
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message);
+             //   MessageBox.Show(ex.Message);
             }
 
             return false;

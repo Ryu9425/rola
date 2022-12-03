@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "wBJX1AIkXjP1Dhcc4fKcbCIKD1LMg5Do768lRr2MTAEkqk6CZpDXfAUbgIPSnYSxB8Vpco5/TrTcwOcG/tekuQ==",
+  "dgSpecHash": "VBCMEF/bdsalnJafNVjwRMgG0eqrY21FD8zgAXGARk0/OpMbZe12/FuyrJ5Fzw+Xvlh30peZjZ9pmqJ6P6dy1w==",
   "success": true,
   "projectFilePath": "F:\\rola\\test1\\test1.csproj",
   "expectedPackageFiles": [
@@ -11,6 +11,7 @@
     "C:\\Users\\LHJ\\.nuget\\packages\\k4os.hash.xxhash\\1.0.6\\k4os.hash.xxhash.1.0.6.nupkg.sha512",
     "C:\\Users\\LHJ\\.nuget\\packages\\microsoft.csharp\\4.7.0\\microsoft.csharp.4.7.0.nupkg.sha512",
     "C:\\Users\\LHJ\\.nuget\\packages\\microsoft.netcore.platforms\\3.1.0\\microsoft.netcore.platforms.3.1.0.nupkg.sha512",
+    "C:\\Users\\LHJ\\.nuget\\packages\\microsoft.netframework.referenceassemblies.net45\\1.0.3\\microsoft.netframework.referenceassemblies.net45.1.0.3.nupkg.sha512",
     "C:\\Users\\LHJ\\.nuget\\packages\\microsoft.win32.registry\\4.7.0\\microsoft.win32.registry.4.7.0.nupkg.sha512",
     "C:\\Users\\LHJ\\.nuget\\packages\\microsoft.win32.systemevents\\4.7.0\\microsoft.win32.systemevents.4.7.0.nupkg.sha512",
     "C:\\Users\\LHJ\\.nuget\\packages\\mysql.data\\8.0.31\\mysql.data.8.0.31.nupkg.sha512",

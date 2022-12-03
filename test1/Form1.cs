@@ -22,7 +22,7 @@ namespace test1
         }
 
         public void GetKeyUUID_Datas()
-        {
+        {           
             try
             {
                 var command = Program.m_dbConnection.CreateCommand();
@@ -46,8 +46,9 @@ namespace test1
                     }
                 }
             }
-            catch
+            catch(Exception ex)
             {
+                MessageBox.Show(ex.Message);
             }
             Constant.key_uuid_list = key_uuid_list;
         }
@@ -144,9 +145,9 @@ namespace test1
                     }
                 }
             }
-            catch
+            catch (Exception ex)
             {
-
+                MessageBox.Show(ex.Message);
             }
 
             dataGridView.DataSource = dt;
@@ -169,14 +170,15 @@ namespace test1
 
                         string day = date_time.Split(" ")[0];
                         string time = date_time.Split(" ")[1];
-                        string dis = day.Split("-")[0] + "年" + day.Split("-")[1] + "年" + day.Split("-")[2] + "日";
+                        string dis = day.Split("-")[0] + "年" + day.Split("-")[1] + "月" + day.Split("-")[2] + "日";
                         dateLabel.Text = dis;
                         timeLabel.Text = time;
                     }
                 }
             }
-            catch
+            catch(Exception ex)
             {
+                MessageBox.Show(ex.Message);
             }
         }
 
