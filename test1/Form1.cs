@@ -9,8 +9,9 @@ using System.Xml.Linq;
 namespace test1
 {
     public partial class Form1 : Form
-    {       
+    {
         string[] itemLists = { "傾斜", "気温", "湿度", "気圧", "電池電圧" };
+        public System.Windows.Forms.Timer timer;
 
         List<KeyUUID> key_uuid_list = new List<KeyUUID>();
         public Form1()
@@ -19,10 +20,29 @@ namespace test1
             AddDateTime();
             GetKeyUUID_Datas();
             SensorDatasView();
+
+            
+            timer = new System.Windows.Forms.Timer();
+            timer.Interval=10000;
+            timer.Tick += new System.EventHandler(NewDisplayData);             
+            timer.Enabled = true;
+            timer.Start();
+        }
+
+        public void AutoUpdating()
+        {
+            
+        }
+
+        public void NewDisplayData(object sender, EventArgs e)
+        {
+            AddDateTime();
+            GetKeyUUID_Datas();
+            SensorDatasView();
         }
 
         public void GetKeyUUID_Datas()
-        {           
+        {
             try
             {
                 var command = Program.m_dbConnection.CreateCommand();
@@ -46,7 +66,7 @@ namespace test1
                     }
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
             }
@@ -55,20 +75,22 @@ namespace test1
 
         public void SensorDatasView()
         {
-            AddDataTable(dataGridView_1, 0);
-            AddDataTable(dataGridView_2, 1);
-            AddDataTable(dataGridView_3, 2);
-            AddDataTable(dataGridView_4, 3);
-            AddDataTable(dataGridView_5, 4);
+            AddDataTable(this.dataGridView_1, 0);
+            AddDataTable(this.dataGridView_2, 1);
+            AddDataTable(this.dataGridView_3, 2);
+            AddDataTable(this.dataGridView_4, 3);
+            AddDataTable(this.dataGridView_5, 4);
+            AllClearSelection();
         }
         public void AddDataTable(DataGridView dataGridView, int _id)
         {
             DataTable dt = new DataTable();
             dt.Columns.Add("ColA", typeof(string));
             dt.Columns.Add("ColB", typeof(string));
+
             string uuid = key_uuid_list[_id].uuid;
             int row_count = 0;
-            //  MessageBox.Show(uuid);
+
             dt.Rows.Add(new object[] { key_uuid_list[_id].display_name, key_uuid_list[_id].uuid });
             row_count++;
 
@@ -150,13 +172,28 @@ namespace test1
                 MessageBox.Show(ex.Message);
             }
 
-            dataGridView.DataSource = dt;
-            dataGridView.Height = 35 * row_count;
-            DataGridViewStyiling(dataGridView);
+            // dataGridView.DataSource = null;
+
+            try
+            {
+                Control.CheckForIllegalCrossThreadCalls = false;
+
+                dataGridView.DataSource = dt;
+                dataGridView.Height = 35 * row_count;
+
+                DataGridViewStyiling(dataGridView);
+            }
+            catch (System.Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                throw;
+            }
+
         }
 
         public void AddDateTime()
         {
+          //  Control.CheckForIllegalCrossThreadCalls = false;
             try
             {
                 var command = Program.m_dbConnection.CreateCommand();
@@ -176,14 +213,15 @@ namespace test1
                     }
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
+                //MessageBox.Show("eeeeeeeeeeeeAddDateTime");
             }
         }
 
         private void DataGridViewStyiling(DataGridView dataGridView)
-        {
+        {            
             dataGridView.EditMode = DataGridViewEditMode.EditProgrammatically;
             dataGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dataGridView.AllowUserToAddRows = false;
@@ -243,7 +281,7 @@ namespace test1
         }
 
         public void AllClearSelection()
-        { 
+        {
             dataGridView_1.ClearSelection();
             dataGridView_2.ClearSelection();
             dataGridView_3.ClearSelection();

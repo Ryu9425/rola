@@ -26,7 +26,8 @@ namespace test1
             Thread web_thread = new Thread(WebDataThread);
             web_thread.IsBackground = true;
             web_thread.Start();
-            while(!OpenConnection()) {
+            while (!OpenConnection())
+            {
                 OpenConnection();
             }
             ApplicationConfiguration.Initialize();
@@ -61,15 +62,15 @@ namespace test1
                 JsonSerializer.Serialize(new
                 {
                     module = "uck9JBnekzPe",
-                    datetime = start_date_time
-                    //  datetime = "2022-11-30 12:02:42"
+                    // datetime = start_date_time
+                    datetime = "2022-12-01 18:00:00"
                 }),
                 Encoding.UTF8,
                 "application/json");
 
             string web_api = GetWebApi();
 
-           // using HttpResponseMessage response = await client.PostAsync(web_api, jsonContent);
+            // using HttpResponseMessage response = await client.PostAsync(web_api, jsonContent);
             using HttpResponseMessage response = await client.PostAsync("https://collapse.sakura.ne.jp/getstream.php", jsonContent);
 
             response.EnsureSuccessStatusCode();
@@ -98,13 +99,13 @@ namespace test1
             }
             catch (Exception ex)
             {
-              //  MessageBox.Show(ex.Message);
+                //  MessageBox.Show(ex.Message);
             }
 
             return false;
         }
 
-         public static bool CloseConnection()
+        public static bool CloseConnection()
         {
             try
             {
@@ -113,7 +114,7 @@ namespace test1
             }
             catch (Exception ex)
             {
-             //   MessageBox.Show(ex.Message);
+                //   MessageBox.Show(ex.Message);
             }
 
             return false;
@@ -127,9 +128,16 @@ namespace test1
             cmd.CommandText = check_sql;
 
             var exist_status_reader = cmd.ExecuteReader();
-            if (exist_status_reader.Read())
+            try
             {
-                date_time = exist_status_reader.GetString(0);
+                if (exist_status_reader.Read())
+                {
+                    date_time = exist_status_reader.GetString(0);
+                }
+            }
+            catch
+            {
+
             }
             return date_time;
         }
@@ -144,10 +152,11 @@ namespace test1
             if (reader.Read())
             {
                 web_api = reader.GetString(1);
-                // minuteBox.Text = reader.GetInt32(2).ToString();
-                // secondBox.Text = reader.GetInt32(3).ToString();
-                // folderBrowserDialog.SelectedPath = reader.GetString(4).ToString();
-                // countBox.Text = reader.GetInt32(5).ToString();
+                Constant.web_api = web_api;
+                Constant.connection_time = reader.GetInt32(2);
+                Constant.connection_interval = reader.GetInt32(3);
+                Constant.store_path = reader.GetString(4);
+                Constant.display_count = reader.GetInt32(5);
             }
             return web_api;
         }
@@ -182,18 +191,22 @@ namespace test1
 
             foreach (Item item in items)
             {
-                if (item_list.Count != 0 && item_list[0].uuid == item.uuid && item_list[0].datetime == item.datetime)
+                // if (item_list.Count != 0 && item_list[0].uuid == item.uuid && item_list[0].datetime == item.datetime)
+                // {
+                //     item_list.Add(item);
+                // }
+                // else if (item_list.Count == 0)
+                // {
+                //     item_list.Add(item);
+                // }
+                if (item.data_id == "15")
                 {
                     item_list.Add(item);
-                }
-                else if (item_list.Count == 0)
-                {
-                    item_list.Add(item);
+                    DisplayDBAdding(item_list);
+                    item_list.Clear();
                 }
                 else
                 {
-                    DisplayDBAdding(item_list);
-                    item_list.Clear();
                     item_list.Add(item);
                 }
             }
@@ -201,12 +214,17 @@ namespace test1
 
         public static void DisplayDBAdding(List<Item> item_list)
         {
-            //  MessageBox.Show(item_list.Count.ToString());
+            if (item_list.Count < 7)
+            {
+                return;
+            }
             string gradient = "";
             string temperature = "";
             string humidity = "";
             string pressure = "";
             string voltage = "";
+            string sensor_date = "";
+            string sensor_time = "";
             string sensorid = item_list[0].sensorid;
             string uuid = item_list[0].uuid;
             string datetime = item_list[0].datetime;
@@ -233,9 +251,19 @@ namespace test1
                 {
                     gradient = string.Format("{0:N1}", Int32.Parse(item.data) / 256.0f);
                 }
+                if (item.data_id == "14")
+                {
+                    sensor_date = Constant.Sensor_Receive_Date(item.data);
+                    //  MessageBox.Show(sensor_date);
+                }
+                if (item.data_id == "15")
+                {
+                    sensor_time = Constant.Sensor_Receive_Time(item.data);
+                    //  MessageBox.Show(sensor_time);
+                }
             }
             var cmd = m_dbConnection.CreateCommand();
-            string check_sql = "SELECT COUNT('id') FROM display WHERE uuid='" + uuid + "' and datetime='" + datetime + "'";
+            string check_sql = "SELECT COUNT('id') FROM display WHERE uuid='" + uuid + "' and datetime='" + datetime + "' and voltage='" + voltage + "'";
             cmd.CommandText = check_sql;
 
             var exist_status_reader = cmd.ExecuteReader();
@@ -245,8 +273,8 @@ namespace test1
                 if (myreader == 0)
                 {
                     var insert_display_cmd = m_dbConnection.CreateCommand();
-                    string inser_sensor_sql = "INSERT INTO display('temperature','humidity','voltage','pressure','gradient','uuid','datetime') VALUES('"
-                        + temperature + "', '" + humidity + "','" + voltage + "','" + pressure + "','" + gradient + "','" + uuid + "', '" + datetime + "')";
+                    string inser_sensor_sql = "INSERT INTO display('temperature','humidity','voltage','pressure','gradient','uuid','sensor_time','datetime') VALUES('"
+                        + temperature + "', '" + humidity + "','" + voltage + "','" + pressure + "','" + gradient + "','" + uuid + "','" + sensor_date + " " + sensor_time + "', '" + datetime + "')";
 
                     insert_display_cmd.CommandText = inser_sensor_sql;
                     insert_display_cmd.ExecuteNonQuery();

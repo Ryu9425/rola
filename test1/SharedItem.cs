@@ -11,6 +11,7 @@ namespace test1
         public string pressure { set; get; }
         public string gradient { set; get; }
         public string uuid { set; get; }
+        public string sensor_time { set; get; }
         public string datetime { set; get; }
     }  
 
@@ -20,6 +21,8 @@ namespace test1
         public string uuid { set; get; }
         public string data_id { set; get; }
         public string data { set; get; }
+        public string sensor_date { set; get; }
+        public string sensor_time { set; get; }
         public string datetime { set; get; }
     } 
 

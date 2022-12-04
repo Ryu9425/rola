@@ -173,7 +173,9 @@ namespace test1
             }
             if(current_page_index==5*current_page_group||per_page_count*current_page_index>total_items_count){
                 nextBtn.Enabled=false;  
-            } else{
+            } else if(per_page_count*5*current_page_group>total_items_count){
+                nextBtn.Enabled=false;
+            }else{
                 nextBtn.Enabled=true;
             }
         }
@@ -181,14 +183,12 @@ namespace test1
         public object[] create_row_obj(int row_number)
         {
             object[] objs = new object[6];
-            objs[0] = display_item_list[row_number].datetime;
+            objs[0] = display_item_list[row_number].sensor_time;
             objs[1] = display_item_list[row_number].temperature;
             objs[2] = display_item_list[row_number].humidity;
             objs[3] = display_item_list[row_number].pressure;
-
             decimal diff_gradient = Math.Round(decimal.Parse(standardBox.Text), 1) - Math.Round(decimal.Parse( display_item_list[row_number].gradient), 1);
-
-            objs[4] = diff_gradient;
+            objs[4] = diff_gradient;            
             objs[5] = display_item_list[row_number].voltage;
 
             return objs;
@@ -256,7 +256,17 @@ namespace test1
             int year = Convert.ToInt32(toYComboBox.Text);
             int month = Convert.ToInt32(toMComboBox.Text);
 
-            int day_count = month % 2 == 0 ? 30 : 31;
+            int day_count = 31;
+
+            if (month % 2 == 0 && month < 8)
+            {
+                day_count = 30;
+            }
+            else if (month % 2 != 0 && month > 8)
+            {
+                day_count = 30;
+            }
+
             if (month == 2) day_count = 28;
             if (year % 4 == 0 && month == 2) day_count = 29;
             for (int i = 1; i <= day_count; i++)
@@ -348,8 +358,8 @@ namespace test1
             try
             {
                 var cmd = Program.m_dbConnection.CreateCommand();
-                string get_display_sql = "SELECT *FROM display WHERE datetime>'" + from_date
-                + " 00:00:00' AND datetime<'" + to_date + " 24:00:00' AND uuid='"+selected_uuid+ "' ORDER BY datetime";
+                string get_display_sql = "SELECT *FROM display WHERE sensor_time>'" + from_date
+                + " 00:00:00' AND sensor_time<'" + to_date + " 24:00:00' AND uuid='"+selected_uuid+ "' ORDER BY datetime";
 
                 cmd.CommandText = get_display_sql;
 
@@ -366,7 +376,8 @@ namespace test1
                     item.pressure = display_data_reader.GetString(4);
                     item.gradient = display_data_reader.GetString(5);
                     item.uuid = display_data_reader.GetString(6);
-                    item.datetime = display_data_reader.GetString(7);
+                    item.sensor_time = display_data_reader.GetString(7);
+                    item.datetime = display_data_reader.GetString(8);
                     display_item_list.Add(item);
                 }
             }
@@ -451,6 +462,37 @@ namespace test1
         private void standardBox_TextChanged(object sender, EventArgs e)
         {
 
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            var sb = new StringBuilder();
+
+            var headers = dataGridView.Columns.Cast<DataGridViewColumn>();
+            sb.AppendLine(string.Join(",", headers.Select(column => "\"" + column.HeaderText + "\"").ToArray()));
+
+            // foreach (DataGridViewRow row in dataGridView.Rows)
+            // {
+            //     var cells = row.Cells.Cast<DataGridViewCell>();
+            //     sb.AppendLine(string.Join(",", cells.Select(cell => "\"" + cell.Value + "\"").ToArray()));
+            // }
+
+            foreach (DisplayItem item in display_item_list)
+            {
+                decimal diff_gradient = Math.Round(decimal.Parse(standardBox.Text), 1) - Math.Round(decimal.Parse( item.gradient), 1);
+            
+                string row = item.sensor_time+","+item.temperature+","+item.humidity+","+item.pressure+","+diff_gradient.ToString()+","
+                       +item.voltage;
+                 
+                 sb.AppendLine(row);
+             }
+
+            string content = sb.ToString();
+            
+            string export_path = Constant.store_path + "/"+uuidBox.Text+"_"+DateTime.Now.ToString("yyyy-MM-dd_hh-mm-ss")+".csv";
+
+            System.IO.File.WriteAllText(export_path, content);
+            MessageBox.Show(export_path+"  exported!");
         }
     }
 }
