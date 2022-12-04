@@ -263,7 +263,8 @@ namespace test1
                 }
             }
             var cmd = m_dbConnection.CreateCommand();
-            string check_sql = "SELECT COUNT('id') FROM display WHERE uuid='" + uuid + "' and datetime='" + datetime + "' and voltage='" + voltage + "'";
+            string check_sql = "SELECT COUNT('id') FROM display WHERE uuid='" + uuid + "' and sensor_time='" + sensor_date+" "+sensor_time 
+                            + "' and voltage='" + voltage + "' and temperature='" + temperature + "' and humidity='" + humidity+ "'";
             cmd.CommandText = check_sql;
 
             var exist_status_reader = cmd.ExecuteReader();

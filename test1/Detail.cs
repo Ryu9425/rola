@@ -37,14 +37,14 @@ namespace test1
         int per_page_count = 15;
         int current_page_group = 1;
         int current_page_index = 1;
-        string current_display_name="";
+        string current_display_name = "";
         string current_uuid = "";
-        string current_standard="";
+        string current_standard = "";
 
         public Detail()
         {
             InitializeComponent();
-
+            this.ControlBox = false;
             BaseDataAdding();
             Combos_Initing();
             AddDataTableIniting();
@@ -53,24 +53,27 @@ namespace test1
 
         public void BaseDataAdding()
         {
-            int sensor_setting_id=Constant.selected_uuid_index;
-            
-            try{              
+            int sensor_setting_id = Constant.selected_uuid_index;
+
+            try
+            {
                 var command = Program.m_dbConnection.CreateCommand();
-                command.CommandText ="SELECT *FROM sensor_setting WHERE id = "+ sensor_setting_id.ToString();
+                command.CommandText = "SELECT *FROM sensor_setting WHERE id = " + sensor_setting_id.ToString();
                 using (var reader = command.ExecuteReader())
                 {
                     while (reader.Read())
-                    {                       
-                        current_display_name = reader.GetString(1)!=""?reader.GetString(1):"";
+                    {
+                        current_display_name = reader.GetString(1) != "" ? reader.GetString(1) : "";
                         current_uuid = reader.GetString(2) != "" ? reader.GetString(2) : "";
                         current_standard = reader.GetValue(3).ToString();
-                        displayBox.Text=current_display_name;
-                        uuidBox.Text=current_uuid;
-                        standardBox.Text=current_standard;
+                        displayBox.Text = current_display_name;
+                        uuidBox.Text = current_uuid;
+                        standardBox.Text = current_standard;
                     }
                 }
-            }catch{
+            }
+            catch
+            {
 
             }
         }
@@ -108,8 +111,8 @@ namespace test1
             GettingFromDB();
 
             total_items_count = display_item_list.Count;
-            current_page_group=1;
-            current_page_index=1;
+            current_page_group = 1;
+            current_page_index = 1;
 
             ChangePaginating(current_page_index);
             Paginator_Buttons_Control();
@@ -131,16 +134,20 @@ namespace test1
 
         public void Paginator_Buttons_Control()
         {
-            if (total_items_count < 5 * current_page_group  * per_page_count)
+            if (total_items_count < 5 * current_page_group * per_page_count)
             {
-                lastBtn.Enabled = false;                
-            }else{
-                lastBtn.Enabled = true; 
+                lastBtn.Enabled = false;
+            }
+            else
+            {
+                lastBtn.Enabled = true;
             }
             if (current_page_group == 1)
             {
                 firstBtn.Enabled = false;
-            }else{
+            }
+            else
+            {
                 firstBtn.Enabled = true;
             }
             btn_1.Text = (5 * (current_page_group - 1) + 1).ToString();
@@ -160,23 +167,31 @@ namespace test1
             if ((5 * (current_page_group - 1) + 3) * per_page_count < total_items_count)
                 btn_4.Show();
             else
-                btn_4.Show();
+                btn_4.Hide();
             if ((5 * (current_page_group - 1) + 4) * per_page_count < total_items_count)
                 btn_5.Show();
             else
-                btn_5.Show();
+                btn_5.Hide();
 
-            if(current_page_index==1) {
-                preBtn.Enabled=false;
-            }else{
-                preBtn.Enabled=true;
+            if (current_page_index == 1)
+            {
+                preBtn.Enabled = false;
             }
-            if(current_page_index==5*current_page_group||per_page_count*current_page_index>total_items_count){
-                nextBtn.Enabled=false;  
-            } else if(per_page_count*5*current_page_group>total_items_count){
-                nextBtn.Enabled=false;
-            }else{
-                nextBtn.Enabled=true;
+            else
+            {
+                preBtn.Enabled = true;
+            }
+            if (current_page_index == 5 * current_page_group || per_page_count * current_page_index > total_items_count)
+            {
+                nextBtn.Enabled = false;
+            }
+            else if (per_page_count * 5 * current_page_group > total_items_count)
+            {
+                nextBtn.Enabled = false;
+            }
+            else
+            {
+                nextBtn.Enabled = true;
             }
         }
 
@@ -187,8 +202,8 @@ namespace test1
             objs[1] = display_item_list[row_number].temperature;
             objs[2] = display_item_list[row_number].humidity;
             objs[3] = display_item_list[row_number].pressure;
-            decimal diff_gradient = Math.Round(decimal.Parse(standardBox.Text), 1) - Math.Round(decimal.Parse( display_item_list[row_number].gradient), 1);
-            objs[4] = diff_gradient;            
+            decimal diff_gradient = Math.Round(decimal.Parse(standardBox.Text), 1) - Math.Round(decimal.Parse(display_item_list[row_number].gradient), 1);
+            objs[4] = diff_gradient;
             objs[5] = display_item_list[row_number].voltage;
 
             return objs;
@@ -248,7 +263,7 @@ namespace test1
             {
                 fromDComboBox.Items.Add(i.ToString());
             }
-            fromDComboBox.Text="1";
+            fromDComboBox.Text = "1";
         }
         public void Add_today_combo()
         {
@@ -311,11 +326,12 @@ namespace test1
             string new_display_name = displayBox.Text;
             string new_standard = standardBox.Text;
 
-            if (new_uuid==""|| new_display_name == ""|| new_standard == ""){
+            if (new_uuid == "" || new_display_name == "" || new_standard == "")
+            {
                 MessageBox.Show("Please input sensor datas!");
                 return;
             }
-            float f;           
+            float f;
             if (float.TryParse(new_standard, out f))
             {
                 float roundedTemp = (float)Math.Round(decimal.Parse(new_standard), 1);
@@ -328,14 +344,14 @@ namespace test1
             try
             {
                 var cmd = Program.m_dbConnection.CreateCommand();
-                string get_sensor_setting_sql = "UPDATE sensor_setting SET display_name = '"+new_display_name+"', uuid= '"+new_uuid+"',standard_value='"+new_standard+"' WHERE id ="+Constant.selected_uuid_index;
+                string get_sensor_setting_sql = "UPDATE sensor_setting SET display_name = '" + new_display_name + "', uuid= '" + new_uuid + "',standard_value='" + new_standard + "' WHERE id =" + Constant.selected_uuid_index;
 
                 cmd.CommandText = get_sensor_setting_sql;
                 cmd.ExecuteNonQuery();
             }
             catch (Exception ex)
             {
-               // MessageBox.Show(ex.Message);
+                // MessageBox.Show(ex.Message);
             }
 
             //searching....
@@ -353,13 +369,13 @@ namespace test1
             string from_date = fromYComboBox.Text + "-" + from_month + "-" + from_day;
             string to_date = toYComboBox.Text + "-" + to_month + "-" + to_day;
 
-            string selected_uuid=uuidBox.Text;
+            string selected_uuid = uuidBox.Text;
 
             try
             {
                 var cmd = Program.m_dbConnection.CreateCommand();
                 string get_display_sql = "SELECT *FROM display WHERE datetime>'" + from_date
-                + " 00:00:00' AND datetime<'" + to_date + " 24:00:00' AND uuid='"+selected_uuid+ "' ORDER BY datetime";
+                + " 00:00:00' AND datetime<'" + to_date + " 24:00:00' AND uuid='" + selected_uuid + "' ORDER BY datetime";
 
                 cmd.CommandText = get_display_sql;
 
@@ -398,54 +414,54 @@ namespace test1
         private void lastBtn_Click(object sender, EventArgs e)
         {
             current_page_index = (total_items_count % per_page_count) == 0 ? (total_items_count / per_page_count) : (total_items_count / per_page_count) + 1;
-            current_page_group = (current_page_index % 5) == 0 ? (current_page_index / 5) : (current_page_index / 5) + 1; 
+            current_page_group = (current_page_index % 5) == 0 ? (current_page_index / 5) : (current_page_index / 5) + 1;
             Paginator_Buttons_Control();
             ChangePaginating(current_page_index);
         }
 
         private void preBtn_Click(object sender, EventArgs e)
         {
-            current_page_group= current_page_group-1;
-            current_page_index = 5 * (current_page_group-1) + 1;
+            current_page_group = current_page_group - 1;
+            current_page_index = 5 * (current_page_group - 1) + 1;
             Paginator_Buttons_Control();
             ChangePaginating(current_page_index);
         }
 
         private void nextBtn_Click(object sender, EventArgs e)
         {
-            current_page_group= current_page_group+1;
-            current_page_index = 5 * (current_page_group-1) + 1;
+            current_page_group = current_page_group + 1;
+            current_page_index = 5 * (current_page_group - 1) + 1;
             Paginator_Buttons_Control();
             ChangePaginating(current_page_index);
         }
 
         private void btn_1_Click(object sender, EventArgs e)
         {
-            current_page_index = 5 * (current_page_group-1) + 1;
+            current_page_index = 5 * (current_page_group - 1) + 1;
             ChangePaginating(current_page_index);
         }
 
         private void btn_2_Click(object sender, EventArgs e)
         {
-            current_page_index = 5 *  (current_page_group-1)  + 2;
+            current_page_index = 5 * (current_page_group - 1) + 2;
             ChangePaginating(current_page_index);
         }
 
         private void btn_3_Click(object sender, EventArgs e)
         {
-            current_page_index = 5 *  (current_page_group-1)  + 3;
+            current_page_index = 5 * (current_page_group - 1) + 3;
             ChangePaginating(current_page_index);
         }
 
         private void btn_4_Click(object sender, EventArgs e)
         {
-            current_page_index = 5 *  (current_page_group-1)  + 4;
+            current_page_index = 5 * (current_page_group - 1) + 4;
             ChangePaginating(current_page_index);
         }
 
         private void btn_5_Click(object sender, EventArgs e)
         {
-            current_page_index = 5 *  (current_page_group-1)  + 5;
+            current_page_index = 5 * (current_page_group - 1) + 5;
             ChangePaginating(current_page_index);
         }
 
@@ -479,13 +495,13 @@ namespace test1
 
             foreach (DisplayItem item in display_item_list)
             {
-                decimal diff_gradient = Math.Round(decimal.Parse(standardBox.Text), 1) - Math.Round(decimal.Parse( item.gradient), 1);
-            
-                string row = item.sensor_time+","+item.temperature+","+item.humidity+","+item.pressure+","+diff_gradient.ToString()+","
-                       +item.voltage;
-                 
-                 sb.AppendLine(row);
-             }
+                decimal diff_gradient = Math.Round(decimal.Parse(standardBox.Text), 1) - Math.Round(decimal.Parse(item.gradient), 1);
+
+                string row = item.sensor_time + "," + item.temperature + "," + item.humidity + "," + item.pressure + "," + diff_gradient.ToString() + ","
+                       + item.voltage;
+
+                sb.AppendLine(row);
+            }
 
             string content = sb.ToString();
 
@@ -494,11 +510,50 @@ namespace test1
                 MessageBox.Show("Please directory!");
                 return;
             }
-            
-            string export_path = Constant.store_path + "/"+uuidBox.Text+"_"+DateTime.Now.ToString("yyyy-MM-dd_hh-mm-ss")+".csv";
 
-            System.IO.File.WriteAllText(export_path, content);
-            MessageBox.Show(export_path+"  exported!");
+            string export_path = Constant.store_path + "/" + uuidBox.Text + "_" + DateTime.Now.ToString("yyyy-MM-dd_hh-mm-ss") + ".csv";
+
+            System.IO.File.WriteAllText(export_path, content, Encoding.UTF8);
+            MessageBox.Show(export_path + "  exported!");
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            string new_uuid = uuidBox.Text;
+            string new_display_name = displayBox.Text;
+            string new_standard = standardBox.Text;
+
+            if (new_uuid == "" || new_display_name == "" || new_standard == "")
+            {
+                MessageBox.Show("Please input sensor datas!");
+                return;
+            }
+            float f;
+            if (float.TryParse(new_standard, out f))
+            {
+                float roundedTemp = (float)Math.Round(decimal.Parse(new_standard), 1);
+            }
+            else
+            {
+                MessageBox.Show("Please input as number into standard degree part!");
+                return;
+            }
+
+            try
+            {
+                var cmd = Program.m_dbConnection.CreateCommand();
+                string get_sensor_setting_sql = "UPDATE sensor_setting SET display_name = '" + new_display_name + "', uuid= '" + new_uuid + "',standard_value='" + new_standard + "' WHERE id =" + Constant.selected_uuid_index;
+
+                cmd.CommandText = get_sensor_setting_sql;
+                cmd.ExecuteNonQuery();
+            }
+            catch (Exception ex)
+            {
+                // MessageBox.Show(ex.Message);
+            }
+
+
+            this.Close();
         }
     }
 }
