@@ -149,20 +149,20 @@ namespace test1
             btn_4.Text = (5 * (current_page_group - 1) + 4).ToString();
             btn_5.Text = (5 * (current_page_group - 1) + 5).ToString();
 
-            if ((5 * (current_page_group - 1) + 2) * per_page_count > total_items_count)
-                btn_2.Hide();
-            else
+            if ((5 * (current_page_group - 1) + 1) * per_page_count < total_items_count)
                 btn_2.Show();
-            if ((5 * (current_page_group - 1) + 3) * per_page_count > total_items_count)
-                btn_3.Hide();
             else
+                btn_2.Hide();
+            if ((5 * (current_page_group - 1) + 2) * per_page_count < total_items_count)
                 btn_3.Show();
-            if ((5 * (current_page_group - 1) + 4) * per_page_count > total_items_count)
-                btn_4.Hide();
+            else
+                btn_3.Hide();
+            if ((5 * (current_page_group - 1) + 3) * per_page_count < total_items_count)
+                btn_4.Show();
             else
                 btn_4.Show();
-            if ((5 * (current_page_group - 1) + 5) * per_page_count > total_items_count)
-                btn_5.Hide();
+            if ((5 * (current_page_group - 1) + 4) * per_page_count < total_items_count)
+                btn_5.Show();
             else
                 btn_5.Show();
 
@@ -358,8 +358,8 @@ namespace test1
             try
             {
                 var cmd = Program.m_dbConnection.CreateCommand();
-                string get_display_sql = "SELECT *FROM display WHERE sensor_time>'" + from_date
-                + " 00:00:00' AND sensor_time<'" + to_date + " 24:00:00' AND uuid='"+selected_uuid+ "' ORDER BY datetime";
+                string get_display_sql = "SELECT *FROM display WHERE datetime>'" + from_date
+                + " 00:00:00' AND datetime<'" + to_date + " 24:00:00' AND uuid='"+selected_uuid+ "' ORDER BY datetime";
 
                 cmd.CommandText = get_display_sql;
 
@@ -488,6 +488,12 @@ namespace test1
              }
 
             string content = sb.ToString();
+
+            if (Constant.store_path.Length < 4)
+            {
+                MessageBox.Show("Please directory!");
+                return;
+            }
             
             string export_path = Constant.store_path + "/"+uuidBox.Text+"_"+DateTime.Now.ToString("yyyy-MM-dd_hh-mm-ss")+".csv";
 

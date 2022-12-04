@@ -17,24 +17,20 @@ namespace test1
         public Form1()
         {
             InitializeComponent();
+            
             AddDateTime();
             GetKeyUUID_Datas();
             SensorDatasView();
 
             
             timer = new System.Windows.Forms.Timer();
-            timer.Interval=10000;
-            timer.Tick += new System.EventHandler(NewDisplayData);             
+            timer.Interval=300000;
+            timer.Tick += new System.EventHandler(DisplayDataUpdate);             
             timer.Enabled = true;
             timer.Start();
         }
 
-        public void AutoUpdating()
-        {
-            
-        }
-
-        public void NewDisplayData(object sender, EventArgs e)
+        public void DisplayDataUpdate(object sender, EventArgs e)
         {
             AddDateTime();
             GetKeyUUID_Datas();

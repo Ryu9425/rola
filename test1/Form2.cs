@@ -245,19 +245,7 @@ namespace test1
             }
         }
 
-        private void dataGridView1_CellPainting(object sender, DataGridViewCellPaintingEventArgs e)
-        {
-            if (e.ColumnIndex == 1 && e.RowIndex >= 0)
-            {
-                e.PaintBackground(e.CellBounds, true);
-                ControlPaint.DrawCheckBox(e.Graphics, e.CellBounds.X + 1, e.CellBounds.Y + 1,
-                    e.CellBounds.Width - 2, e.CellBounds.Height - 2,
-                    (bool)e.FormattedValue ? ButtonState.Checked : ButtonState.Normal);
-                e.Handled = true;
-            }
-        }
-
-        private void StoreMainSetting()
+        private void closeBtn_Click(object sender, EventArgs e)
         {
             string web_api = apiBox.Text;
             string diff_minute = minuteBox.Text;
@@ -278,6 +266,11 @@ namespace test1
                 MessageBox.Show("Please Input number in minute, second, count fields");
                 return;
             }
+            if (store_path.Length < 5)
+            {
+                MessageBox.Show("Please Directory!");
+                return;
+            }
 
             try
             {
@@ -287,16 +280,17 @@ namespace test1
 
                 command.CommandText = update_sql;
                 command.ExecuteNonQuery();
+                Constant.web_api = web_api;
+                Constant.connection_time = System.Convert.ToInt32(diff_minute);
+                Constant.connection_interval = System.Convert.ToInt32(diff_second);
+                Constant.store_path = store_path;
+                Constant.display_count = System.Convert.ToInt32(uuid_count);
             }
             catch (System.Exception)
             {
                 throw;
             }
-        }
-
-        private void closeBtn_Click(object sender, EventArgs e)
-        {
-            StoreMainSetting();
+            
             GettingStatusFromTable();
 
             this.Close();
