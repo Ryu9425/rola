@@ -14,6 +14,8 @@ namespace test1
         public static string store_path="";
         public static int display_count=5;
 
+        public static bool is_first = true;
+
         public static string Sensor_Receive_Date(string binary_number_str)
         {
             var ttt = Convert.ToString(Int32.Parse(binary_number_str), 2).PadLeft(15, '0');

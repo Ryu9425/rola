@@ -13,7 +13,6 @@ namespace test1
         string[] itemLists = { "傾斜", "気温", "湿度", "気圧", "電池電圧" };
         public System.Windows.Forms.Timer timer;
 
-        public bool is_first = true;
 
         List<KeyUUID> key_uuid_list = new List<KeyUUID>();
         public Form1()
@@ -206,10 +205,11 @@ namespace test1
                         string day = date_time.Split(" ")[0];
                         string time = date_time.Split(" ")[1];
                         string dis = day.Split("-")[0] + "年" + day.Split("-")[1] + "月" + day.Split("-")[2] + "日";
-                        if (!is_first)
-                            AutoClosingMessageBox.Show("Updated!", "Sensor", 2000);
+                        if (!Constant.is_first)
+                            MessageBox.Show("Updated display state at once by 5 min!", "Sensor");
+                        // AutoClosingMessageBox.Show("Updated!", "Sensor", 2000);
                         else
-                            is_first = false;
+                            Constant.is_first = false;
 
                         dateLabel.Text = dis;
                         timeLabel.Text = time;

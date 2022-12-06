@@ -552,7 +552,7 @@ namespace test1
                 // MessageBox.Show(ex.Message);
             }
 
-
+            Constant.is_first = true;
             this.Close();
         }
     }

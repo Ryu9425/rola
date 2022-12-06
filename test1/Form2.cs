@@ -290,9 +290,9 @@ namespace test1
             {
                 throw;
             }
-            
-            GettingStatusFromTable();
 
+            GettingStatusFromTable();
+            Constant.is_first = true;
             this.Close();
         }
     }

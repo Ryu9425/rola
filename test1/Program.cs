@@ -1,3 +1,5 @@
+using System.Globalization;
+using System.Xml;
 using System.Reflection;
 using System.Data.SQLite;
 using System.Diagnostics;
@@ -62,8 +64,8 @@ namespace test1
                 JsonSerializer.Serialize(new
                 {
                     module = "uck9JBnekzPe",
-                    // datetime = start_date_time
-                    datetime = "2022-12-01 18:00:00"
+                     datetime = start_date_time
+                    //datetime = "2022-12-01 18:00:00"
                 }),
                 Encoding.UTF8,
                 "application/json");
@@ -133,12 +135,17 @@ namespace test1
                 if (exist_status_reader.Read())
                 {
                     date_time = exist_status_reader.GetString(0);
+                    DateTime oDate = DateTime.ParseExact(date_time, "yyyy-MM-dd HH:mm:ss", null);
+                    DateTime start_date = oDate.AddSeconds(-20);
+                    date_time = start_date.ToString("yyyy-mm-dd HH:mm:ss");
+                    // MessageBox.Show(start_date.ToString("yyyy-mm-dd HH:mm:ss"));
                 }
             }
-            catch
+            catch (System.Exception ex)
             {
-
+                MessageBox.Show(ex.ToString());
             }
+
             return date_time;
         }
         public static string GetWebApi()
@@ -186,19 +193,16 @@ namespace test1
         }
         public static void DiaplayDataAdding(Item[] items)
         {
-            // MessageBox.Show(items.Length.ToString());
+            WriteCharacters(items);
+
             List<Item> item_list = new List<Item>();
 
             foreach (Item item in items)
             {
-                // if (item_list.Count != 0 && item_list[0].uuid == item.uuid && item_list[0].datetime == item.datetime)
-                // {
-                //     item_list.Add(item);
-                // }
-                // else if (item_list.Count == 0)
-                // {
-                //     item_list.Add(item);
-                // }
+                string item_datas = "sensor id:" + item.sensorid + ", uuid: " + item.uuid + ", data_id: "
+                              + item.data_id + ", data: " + item.data + ",datetime:" + item.datetime;
+
+
                 if (item.data_id == "15")
                 {
                     item_list.Add(item);
@@ -209,6 +213,23 @@ namespace test1
                 {
                     item_list.Add(item);
                 }
+            }
+        }
+        static async void WriteCharacters(Item[] items)
+        {
+            string file_path = Path.Combine(Directory.GetCurrentDirectory(), "rola.txt");
+
+            MessageBox.Show(items.Length.ToString());
+            using (StreamWriter file = File.AppendText(file_path))
+            {
+                foreach (Item item in items)
+                {
+                    string item_datas = "sensor id:" + item.sensorid + ", uuid: " + item.uuid + ", data_id: "
+                                  + item.data_id + ", data: " + item.data + ",datetime:" + item.datetime;
+
+                    await file.WriteLineAsync(item_datas);
+                }
+                MessageBox.Show("rola.txt log file updated at once by 10 min!");
             }
         }
 
@@ -263,8 +284,8 @@ namespace test1
                 }
             }
             var cmd = m_dbConnection.CreateCommand();
-            string check_sql = "SELECT COUNT('id') FROM display WHERE uuid='" + uuid + "' and sensor_time='" + sensor_date+" "+sensor_time 
-                            + "' and voltage='" + voltage + "' and temperature='" + temperature + "' and humidity='" + humidity+ "'";
+            string check_sql = "SELECT COUNT('id') FROM display WHERE uuid='" + uuid + "' and sensor_time='" + sensor_date + " " + sensor_time
+                            + "' and voltage='" + voltage + "' and temperature='" + temperature + "' and humidity='" + humidity + "'";
             cmd.CommandText = check_sql;
 
             var exist_status_reader = cmd.ExecuteReader();
