@@ -19,6 +19,7 @@ namespace test1
 
         public static string connection_path = "Data Source=" + Path.Combine(Directory.GetCurrentDirectory(), "rola.db");
         public static SQLiteConnection m_dbConnection = new SQLiteConnection(connection_path);
+
         [STAThread]
 
         static void Main()
@@ -38,33 +39,30 @@ namespace test1
 
         static void WebDataThread()
         {
-            wepDataIniting(null, null);
-            timer = new System.Timers.Timer(300000);
-            timer.Elapsed += wepDataIniting;
+            while (OpenConnection() == false)
+            {
+                OpenConnection();
+            }
+            // wepDataIniting(null, null);
+            timer = new System.Timers.Timer(600000);
+            timer.Elapsed += wepDataInviting;
             timer.AutoReset = true; ;
             timer.Enabled = true;
         }
 
-        public static async void wepDataIniting(object sender, EventArgs e)
+        public static async void wepDataInviting(object sender, EventArgs e)
         {
             HttpClient client = new HttpClient();
 
-            DateTime currentTime = DateTime.Now;
-            double minuts = -6;
-            DateTime pre_Time = currentTime.AddMinutes(minuts);
 
-            if (OpenConnection() == false) return;
-
-            // string start_date_time = pre_Time.ToString("yyyy-MM-dd HH:mm:ss");  
-            string start_date_time = GetPreDate() == "" ? pre_Time.ToString("yyyy-MM-dd HH:mm:ss")
+            string start_date_time = GetPreDate() == "" ? "2022-12-01 12:00:00"
                                                     : GetPreDate();
-            //MessageBox.Show(start_date_time);
 
             using StringContent jsonContent = new(
                 JsonSerializer.Serialize(new
                 {
                     module = "uck9JBnekzPe",
-                     datetime = start_date_time
+                    datetime = start_date_time
                     //datetime = "2022-12-01 18:00:00"
                 }),
                 Encoding.UTF8,
@@ -72,12 +70,16 @@ namespace test1
 
             string web_api = GetWebApi();
 
-            // using HttpResponseMessage response = await client.PostAsync(web_api, jsonContent);
+
             using HttpResponseMessage response = await client.PostAsync("https://collapse.sakura.ne.jp/getstream.php", jsonContent);
 
             response.EnsureSuccessStatusCode();
 
             var jsonResponse = await response.Content.ReadAsStringAsync();
+
+
+            WriteWebContent(start_date_time);
+
             try
             {
                 Item[] items = JsonSerializer.Deserialize<Item[]>(jsonResponse);
@@ -135,15 +137,15 @@ namespace test1
                 if (exist_status_reader.Read())
                 {
                     date_time = exist_status_reader.GetString(0);
-                    DateTime oDate = DateTime.ParseExact(date_time, "yyyy-MM-dd HH:mm:ss", null);
-                    DateTime start_date = oDate.AddSeconds(-20);
-                    date_time = start_date.ToString("yyyy-mm-dd HH:mm:ss");
+                    // DateTime oDate = DateTime.ParseExact(date_time, "yyyy-MM-dd HH:mm:ss", null);
+                    // DateTime start_date = oDate.AddSeconds(-20);
+                    // date_time = start_date.ToString("yyyy-mm-dd HH:mm:ss");
                     // MessageBox.Show(start_date.ToString("yyyy-mm-dd HH:mm:ss"));
                 }
             }
             catch (System.Exception ex)
             {
-                MessageBox.Show(ex.ToString());
+                // MessageBox.Show(ex.ToString());
             }
 
             return date_time;
@@ -193,7 +195,7 @@ namespace test1
         }
         public static void DiaplayDataAdding(Item[] items)
         {
-            WriteCharacters(items);
+            //  WriteCharacters(items);
 
             List<Item> item_list = new List<Item>();
 
@@ -219,18 +221,36 @@ namespace test1
         {
             string file_path = Path.Combine(Directory.GetCurrentDirectory(), "rola.txt");
 
-            MessageBox.Show(items.Length.ToString());
-            using (StreamWriter file = File.AppendText(file_path))
-            {
-                foreach (Item item in items)
-                {
-                    string item_datas = "sensor id:" + item.sensorid + ", uuid: " + item.uuid + ", data_id: "
-                                  + item.data_id + ", data: " + item.data + ",datetime:" + item.datetime;
+            string access_time = GetPreDate();
 
-                    await file.WriteLineAsync(item_datas);
-                }
-                MessageBox.Show("rola.txt log file updated at once by 10 min!");
+            //  MessageBox.Show(items.Length.ToString());
+            StreamWriter file = File.AppendText(file_path);
+            foreach (Item item in items)
+            {
+                string item_datas = " _module:uck9JBnekzPe: _datetime:" + access_time + ", sensor id:" + item.sensorid + ", uuid: " + item.uuid + ", data_id: "
+                              + item.data_id + ", data: " + item.data + ",datetime:" + item.datetime;
+
+                await file.WriteLineAsync(item_datas);
             }
+            MessageBox.Show("rola.txt log file updated at once by 10 min!");
+
+            file.Close();
+        }
+
+        static async void WriteWebContent(string content)
+        {
+            string file_path = Path.Combine(Directory.GetCurrentDirectory(), "rola.txt");
+
+            string access_time = DateTime.Now.ToString("yyyy-mm-dd HH:mm:ss");
+
+
+            StreamWriter file = File.AppendText(file_path);
+
+            content = access_time + ", datetime: " + content + "\n";
+            //  MessageBox.Show(content);
+
+            await file.WriteAsync(content);
+            file.Close();
         }
 
         public static void DisplayDBAdding(List<Item> item_list)
