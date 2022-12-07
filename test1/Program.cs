@@ -78,7 +78,7 @@ namespace test1
             var jsonResponse = await response.Content.ReadAsStringAsync();
 
 
-            WriteWebContent(start_date_time);
+           // WriteWebContent(start_date_time);
 
             try
             {
@@ -232,7 +232,7 @@ namespace test1
 
                 await file.WriteLineAsync(item_datas);
             }
-            MessageBox.Show("rola.txt log file updated at once by 10 min!");
+         //   MessageBox.Show("rola.txt log file updated at once by 10 min!");
 
             file.Close();
         }

@@ -65,7 +65,7 @@ namespace test1
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message);
+                // MessageBox.Show(ex.Message);
             }
             Constant.key_uuid_list = key_uuid_list;
         }
@@ -206,7 +206,8 @@ namespace test1
                         string time = date_time.Split(" ")[1];
                         string dis = day.Split("-")[0] + "年" + day.Split("-")[1] + "月" + day.Split("-")[2] + "日";
                         if (!Constant.is_first)
-                            MessageBox.Show("Updated display state at once by 5 min!", "Sensor");
+                            ;
+                        // MessageBox.Show("Updated display state at once by 5 min!", "Sensor");
                         // AutoClosingMessageBox.Show("Updated!", "Sensor", 2000);
                         else
                             Constant.is_first = false;
