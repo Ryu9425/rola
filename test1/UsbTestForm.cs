@@ -41,6 +41,7 @@ namespace test1
             InitializeComponent();
 
             // ComPortOpen();
+            ComPortSetting();
             SensorDatas();
         }
 
@@ -75,6 +76,11 @@ namespace test1
             {
                 throw;
             }
+        }
+
+        private void ComPortSetting()
+        {
+            _IoTIF.WriteStr("\x1b[?01H\r\n");
         }
         private void OpenBtn_Click(object sender, EventArgs e)
         {
@@ -119,14 +125,14 @@ namespace test1
         private void SensorDatas()
         {
             command_no++;
-           // command_no = 2;
+            // command_no = 2;
             string hexid = $"{command_no:X2}";
 
             int child_id_no = 2;
 
             string child_id = $"{child_id_no:X2}";
 
-           // physics_address = "44032c7a";
+            // physics_address = "44032c7a";
 
             string crc_cal_part = physics_address + hexid + conn_format_code + sensor_total_length
                                + sensor_command + child_id + sensor_total_data + sensor_data_count;
