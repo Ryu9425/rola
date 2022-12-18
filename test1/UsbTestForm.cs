@@ -19,8 +19,8 @@ using System.Net.Sockets;
 namespace test1
 {
     public partial class UsbTestForm : Form
-    {      
-         public int command_no = 0;
+    {
+        public int command_no = 0;
         const string conn_format_code = "ff";
         const string conn_data_length = "0014";
         const string child_sensor_count = "0004";
@@ -28,11 +28,20 @@ namespace test1
         const string conn_data_stx = "02";
         const string conn_data_etx = "030d0a";
 
+        const string sensor_data_count = "18";
+        const string sensor_total_data = "ffff";
+        const string sensor_total_length = "0005";
+        const string sensor_command = "50";
+
+
+        public string physics_address;
+
         public UsbTestForm()
         {
             InitializeComponent();
 
-            ComPortOpen();
+            // ComPortOpen();
+            SensorDatas();
         }
 
         private const string _logPrefix = "IoTTrans";
@@ -66,49 +75,88 @@ namespace test1
             {
                 throw;
             }
-
         }
         private void OpenBtn_Click(object sender, EventArgs e)
-        { 
+        {
+            // // IoTデバイス初期化  Device initialization
+            // TransIotInit();
+            string date_time_hex = DateToHexConcvert();
 
-                // // IoTデバイス初期化  Device initialization
-                // TransIotInit();
-                string date_time_hex = DateToHexConcvert();
+            command_no++;
+            string hexid = $"{command_no:X2}";
 
-                command_no++;
-                string hexid = $"{command_no:X2}";
+            physics_address = this.GetPhysicalAddresses()[0].ToString();
+            physics_address = physics_address.Substring(0, 8);
 
-                var physics_address = this.GetPhysicalAddresses()[0].ToString();
-                physics_address = physics_address.Substring(0, 8);
+            string crc_cal_part = physics_address + hexid + conn_format_code + conn_data_length +
+                child_sensor_count + conn_request_code + date_time_hex;
+            MessageBox.Show("crc_cal: " + crc_cal_part);
+            //crc_cal_part = "44032c7a01ff00140500013230323231323138313431393237303030";
+
+            byte[] crc_body = StringToByteArray(crc_cal_part);
+            ushort crc_part = Crc16Ccitt(crc_body);
+
+            string crc_part_hex = crc_part.ToString("X2");
+            MessageBox.Show("crc_check: " + crc_part_hex);
+
+            string base64PreStr = crc_cal_part + crc_part_hex;
+
+            string stringToConvert = "44032c7a01ff001405000132303232313231383134313932373030304741";
+
+            byte[] convertedByte = StringToByteArray(base64PreStr);
+            string hex = System.Convert.ToBase64String(convertedByte);
+            string cmdBuf = Base64ToHexadecimal(hex);
+
+            string total_result = conn_data_stx + cmdBuf + conn_data_etx;
+
+            MessageBox.Show(total_result);
+
+            byte[] total_bites = StringToByteArray(total_result);
+
+            _IoTIF.WriteBytes(total_bites);
+        }
+
+        private void SensorDatas()
+        {
+            command_no++;
+           // command_no = 2;
+            string hexid = $"{command_no:X2}";
+
+            int child_id_no = 2;
+
+            string child_id = $"{child_id_no:X2}";
+
+           // physics_address = "44032c7a";
+
+            string crc_cal_part = physics_address + hexid + conn_format_code + sensor_total_length
+                               + sensor_command + child_id + sensor_total_data + sensor_data_count;
+
+            MessageBox.Show("crc_cal: " + crc_cal_part);
+            //crc_cal_part = "44032c7a01ff00140500013230323231323138313431393237303030";
+
+            byte[] crc_body = StringToByteArray(crc_cal_part);
+            ushort crc_part = Crc16Ccitt(crc_body);
+
+            string crc_part_hex = crc_part.ToString("X2");
+            MessageBox.Show("crc_check: " + crc_part_hex);
+
+            string base64PreStr = crc_cal_part + crc_part_hex;
+
+            string stringToConvert = "44032c7a01ff001405000132303232313231383134313932373030304741";
+
+            byte[] convertedByte = StringToByteArray(base64PreStr);
+            string hex = System.Convert.ToBase64String(convertedByte);
+            string cmdBuf = Base64ToHexadecimal(hex);
+
+            string total_result = conn_data_stx + cmdBuf + conn_data_etx;
+
+            MessageBox.Show(total_result);
+
+            byte[] total_bites = StringToByteArray(total_result);
+
+            //   _IoTIF.WriteBytes(total_bites);
 
 
-                string crc_cal_part = physics_address + hexid + conn_format_code + conn_data_length+
-                    child_sensor_count+conn_request_code + date_time_hex;
-                MessageBox.Show("crc_cal: "+crc_cal_part);
-                //crc_cal_part = "44032c7a01ff00140500013230323231323138313431393237303030";
-
-                byte[] crc_body = StringToByteArray(crc_cal_part);
-                ushort crc_part = Crc16Ccitt(crc_body);
-
-                string crc_part_hex = crc_part.ToString("X2");
-                 MessageBox.Show("crc_check: " + crc_part_hex);
-
-                string base64PreStr = crc_cal_part+crc_part_hex;
-
-                string stringToConvert = "44032c7a01ff001405000132303232313231383134313932373030304741";
-
-                byte[] convertedByte = StringToByteArray(base64PreStr);
-                string hex = System.Convert.ToBase64String(convertedByte);
-                string cmdBuf = Base64ToHexadecimal(hex);
-
-                string total_result = conn_data_stx + cmdBuf + conn_data_etx;
-
-                MessageBox.Show(total_result);
-
-                byte[] total_bites = StringToByteArray(total_result);
-
-                _IoTIF.WriteBytes(total_bites);
-           
         }
 
         /// <summary>
@@ -181,11 +229,11 @@ namespace test1
             return datetimeconvert;
         }
 
-          private string Base64ToHexadecimal(string _base64str)
+        private string Base64ToHexadecimal(string _base64str)
         {
 
             string result = "";
-           
+
 
             char[] values = _base64str.ToCharArray();
             foreach (char letter in values)
