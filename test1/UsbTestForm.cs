@@ -97,16 +97,14 @@ namespace test1
 
                 string stringToConvert = "44032c7a01ff001405000132303232313231383134313932373030304741";
 
-                byte[] convertedByte = StringToByteArray(stringToConvert);
-
+                byte[] convertedByte = StringToByteArray(base64PreStr);
                 string hex = System.Convert.ToBase64String(convertedByte);
-
                 string cmdBuf = Base64ToHexadecimal(hex);
 
                 string total_result = conn_data_stx + cmdBuf + conn_data_etx;
 
                 MessageBox.Show(total_result);
-                
+
                 byte[] total_bites = StringToByteArray(total_result);
 
                 _IoTIF.WriteBytes(total_bites);
