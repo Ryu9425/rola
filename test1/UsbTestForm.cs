@@ -39,9 +39,8 @@ namespace test1
         public UsbTestForm()
         {
             InitializeComponent();
-
-            // ComPortOpen();
-            ComPortSetting();
+            ComPortOpen();
+            TransIotInit();
             SensorDatas();
         }
 
@@ -78,14 +77,8 @@ namespace test1
             }
         }
 
-        private void ComPortSetting()
-        {
-            _IoTIF.WriteStr("\x1b[?01H\r\n");
-        }
         private void OpenBtn_Click(object sender, EventArgs e)
         {
-            // // IoTデバイス初期化  Device initialization
-            // TransIotInit();
             string date_time_hex = DateToHexConcvert();
 
             command_no++;
@@ -120,10 +113,32 @@ namespace test1
             byte[] total_bites = StringToByteArray(total_result);
 
             _IoTIF.WriteBytes(total_bites);
+
+
+            const int HT03_COM_TIMEOUT = 1000;
+
+            var sw = new Stopwatch();
+            sw.Restart();
+
+            string recvStr = string.Empty;
+            do
+            {
+                if (sw.ElapsedMilliseconds > HT03_COM_TIMEOUT)
+                {
+                    sw.Stop();
+                    throw new ApplicationException("connect: データ送信の応答待ちでタイムアウト");
+                }
+                System.Threading.Thread.Sleep(1);
+                var recvBuf = _IoTIF.ReadBytes();
+                recvStr += Encoding.ASCII.GetString(recvBuf);
+            } while (!recvStr.EndsWith("\n"));
+
+            MessageBox.Show("connection status : " + recvStr);
         }
 
         private void SensorDatas()
         {
+            string result = "";
             command_no++;
             // command_no = 2;
             string hexid = $"{command_no:X2}";
@@ -160,9 +175,28 @@ namespace test1
 
             byte[] total_bites = StringToByteArray(total_result);
 
-            //   _IoTIF.WriteBytes(total_bites);
+            _IoTIF.WriteBytes(total_bites);
 
 
+            const int HT03_COM_TIMEOUT = 1000;
+
+            var sw = new Stopwatch();
+            sw.Restart();
+
+            string recvStr = string.Empty;
+            do
+            {
+                if (sw.ElapsedMilliseconds > HT03_COM_TIMEOUT)
+                {
+                    sw.Stop();
+                    throw new ApplicationException("sensor: データ送信の応答待ちでタイムアウト");
+                }
+                System.Threading.Thread.Sleep(1);
+                var recvBuf = _IoTIF.ReadBytes();
+                recvStr += Encoding.ASCII.GetString(recvBuf);
+            } while (!recvStr.EndsWith("\n"));
+
+            MessageBox.Show("received sensor data" + recvStr);
         }
 
         /// <summary>
@@ -171,9 +205,28 @@ namespace test1
         private void TransIotInit()
         {
             string cmdStr;
+            _IoTIF.WriteStr("\x1b[?01H\r\n");
 
-            //   // 受信バッファをクリア
-            //   _IoTIF.ReadBytes();
+            // 受信バッファをクリア
+            const int HT03_COM_TIMEOUT = 1000;
+
+            var sw = new Stopwatch();
+            sw.Restart();
+
+            string recvStr = string.Empty;
+            do
+            {
+                if (sw.ElapsedMilliseconds > HT03_COM_TIMEOUT)
+                {
+                    sw.Stop();
+                    throw new ApplicationException("データ送信の応答待ちでタイムアウト");
+                }
+                System.Threading.Thread.Sleep(1);
+                var recvBuf = _IoTIF.ReadBytes();
+                recvStr += Encoding.ASCII.GetString(recvBuf);
+            } while (!recvStr.EndsWith("\n"));
+
+            MessageBox.Show("start init setting status : " + recvStr);
         }
 
         public static byte[] StringToByteArray(String hex)
@@ -274,44 +327,10 @@ namespace test1
             return macAddresses;
         }
 
-
-
-        /// <summary>
-        /// IoT送信用に値変換
-        /// </summary>
-        private short ConvTransValue(double src, double keisu)
-        {
-            double tmp = Math.Floor(src * keisu);
-            if (tmp > short.MaxValue)
-            {
-                return short.MaxValue;
-            }
-            if (tmp < short.MinValue)
-            {
-                return short.MinValue;
-            }
-            return Convert.ToInt16(tmp);
-        }
+      
 
         private const byte PC_COMMAND_HT03_DATA = (byte)0x01;
-
-        /// <summary>
-        /// IoT送信用に評価結果の値変換
-        /// </summary>
-        /// <param name="src"></param>
-        /// <returns></returns>
-        private short ConvTransHyokaKekka(int src)
-        {
-            if (src == 1)
-            {
-                // OK
-                return 0;
-            }
-            else
-            {
-                return 0xff;
-            }
-        }
+  
         private void TransIoT2byte(byte sqnsNo, byte ch, short data)
         {
             const int HT03_COM_TIMEOUT = 1000;
@@ -397,16 +416,6 @@ namespace test1
             sw.Restart();
             bool isRecving = true;
             var recvChs = new List<byte>(ch);
-
-#if DEBUG
-            isRecving = false;
-
-            foreach (byte id in ch)
-            {
-                int chTmp = 0x40 | id;
-                //   TraceLog.WriteLog2(10, String.Format("send wait sensor-id: 0x{0:X2}", chTmp), _logPrefix);
-            }
-#endif
 
             while (isRecving)
             {
@@ -502,6 +511,5 @@ namespace test1
                 return true;
             }
         }
-
     }
 }
