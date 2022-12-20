@@ -242,7 +242,7 @@ namespace test1
         {
             string file_path = Path.Combine(Directory.GetCurrentDirectory(), "rola.txt");
 
-            string access_time = DateTime.Now.ToString("yyyy-mm-dd HH:mm:ss");
+            string access_time = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
 
 
             StreamWriter file = File.AppendText(file_path);
