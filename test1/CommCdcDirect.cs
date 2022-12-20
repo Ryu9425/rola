@@ -19,8 +19,8 @@ namespace ComInterface
         public CommCdcDirect()
             : base()
         {
-            PortName = "COM1";
-            _ComPort = "COM1";
+            PortName = "COM6";
+            _ComPort = "COM6";
             _log = new LogProviderFile();
             _log.CurDir = Path.Combine(Path.GetDirectoryName(Application.ExecutablePath), "Log");
         }

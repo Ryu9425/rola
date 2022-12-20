@@ -30,6 +30,7 @@
         {
             this.OpenBtn = new System.Windows.Forms.Button();
             this.textBox1 = new System.Windows.Forms.TextBox();
+            this.SensorBtn = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // OpenBtn
@@ -49,11 +50,22 @@
             this.textBox1.Size = new System.Drawing.Size(185, 23);
             this.textBox1.TabIndex = 1;
             // 
+            // SensorBtn
+            // 
+            this.SensorBtn.Location = new System.Drawing.Point(373, 114);
+            this.SensorBtn.Name = "SensorBtn";
+            this.SensorBtn.Size = new System.Drawing.Size(103, 38);
+            this.SensorBtn.TabIndex = 2;
+            this.SensorBtn.Text = "SensorBtn";
+            this.SensorBtn.UseVisualStyleBackColor = true;
+            this.SensorBtn.Click += new System.EventHandler(this.SensorBtn_Click);
+            // 
             // UsbTestForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.SensorBtn);
             this.Controls.Add(this.textBox1);
             this.Controls.Add(this.OpenBtn);
             this.Name = "UsbTestForm";
@@ -67,5 +79,6 @@
 
         private Button OpenBtn;
         private TextBox textBox1;
+        private Button SensorBtn;
     }
 }

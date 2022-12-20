@@ -13,7 +13,7 @@ namespace ComInterface
     public class CommCdc : CommBase
     {
         protected SerialPort m_SerialPort = null;
-        protected string _ComPort = "COM1";
+        protected string _ComPort = "COM6";
         public int BaudRate { set; get; }
         public int DataBits { set; get; }
         public Parity ParityType { set; get; }
