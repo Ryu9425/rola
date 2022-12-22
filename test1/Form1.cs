@@ -12,9 +12,12 @@ namespace test1
     {
         string[] itemLists = { "傾斜", "気温", "湿度", "気圧", "電池電圧" };
         public System.Windows.Forms.Timer timer;
-
+        public System.Timers.Timer usb_timer;
+        public string started_time = string.Empty;
+        public bool is_port_opened = false;
 
         List<KeyUUID> key_uuid_list = new List<KeyUUID>();
+
         public Form1()
         {
             InitializeComponent();
@@ -29,6 +32,10 @@ namespace test1
             timer.Tick += new System.EventHandler(DisplayDataUpdate);
             timer.Enabled = true;
             timer.Start();
+
+            usb_timer = new System.Timers.Timer();
+            usb_timer.AutoReset = false;
+            usb_timer.Enabled = true;
         }
 
         public void DisplayDataUpdate(object sender, EventArgs e)
@@ -384,12 +391,42 @@ namespace test1
         private void UsbBtn_Click(object sender, EventArgs e)
         {
             UsbController usbController = new UsbController();
-            if (!usbController.ComPortOpen()) return;
-            if (!usbController.TransIotInit()) return;
-            if (!usbController.NopCommand()) return;
+            if (!is_port_opened)
+            {
+                if (!usbController.ComPortOpen())
+                    return;
+                else
+                {
+                    if (!usbController.TransIotInit()) return;
+                    if (!usbController.NopCommand()) return;
+                    is_port_opened = true;
+                }
+            }
+            if (started_time == string.Empty)
+            {
+                string sensor_receive_start = usbController.SensorConnection();
+                if (sensor_receive_start == "date_error")
+                    return;
+                else
+                {
+                    started_time = sensor_receive_start;
+                }
 
-            string sensor_receive_start = usbController.SensorConnection();
-            if(sensor_receive_start=="date_error") return;
+            }
+            DateTime current_datetime = DateTime.Now;
+            string _date = started_time.Split(" ")[0];
+            string _time = started_time.Split(" ")[1];
+            DateTime stated_datetime = new DateTime(Convert.ToInt32(_date.Split("-")[0]), Convert.ToInt32(_date.Split("-")[0]), Convert.ToInt32(_date.Split("-")[0]),
+                         Convert.ToInt32(_time.Split(":")[0]), Convert.ToInt32(_time.Split(":")[0]), Convert.ToInt32(_time.Split(":")[0]));
+
+            if ((current_datetime - stated_datetime).Seconds < 300)
+            {
+                usbController.AllSenorData();
+            }
+            else
+            {
+                started_time = string.Empty;
+            }
             //usbController.AllSenorData();
         }
     }

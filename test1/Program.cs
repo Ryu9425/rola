@@ -47,14 +47,13 @@ namespace test1
             // wepDataIniting(null, null);
             timer = new System.Timers.Timer(600000);
             timer.Elapsed += wepDataInviting;
-            timer.AutoReset = true; ;
+            timer.AutoReset = true; 
             timer.Enabled = true;
         }
 
         public static async void wepDataInviting(object sender, EventArgs e)
         {
             HttpClient client = new HttpClient();
-
 
             string start_date_time = GetPreDate() == "" ? "2022-12-01 12:00:00"
                                                     : GetPreDate();
