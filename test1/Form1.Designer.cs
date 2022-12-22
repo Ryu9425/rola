@@ -41,6 +41,7 @@
             this.dataGridView_4 = new System.Windows.Forms.DataGridView();
             this.dataGridView_5 = new System.Windows.Forms.DataGridView();
             this.timeLabel = new System.Windows.Forms.Label();
+            this.UsbBtn = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView_1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView_2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView_3)).BeginInit();
@@ -221,11 +222,22 @@
             this.timeLabel.Text = "13:40:00";
             this.timeLabel.UseMnemonic = false;
             // 
+            // UsbBtn
+            // 
+            this.UsbBtn.Location = new System.Drawing.Point(873, 118);
+            this.UsbBtn.Name = "UsbBtn";
+            this.UsbBtn.Size = new System.Drawing.Size(61, 58);
+            this.UsbBtn.TabIndex = 15;
+            this.UsbBtn.Text = "USB";
+            this.UsbBtn.UseVisualStyleBackColor = true;
+            this.UsbBtn.Click += new System.EventHandler(this.UsbBtn_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(964, 591);
+            this.Controls.Add(this.UsbBtn);
             this.Controls.Add(this.timeLabel);
             this.Controls.Add(this.dataGridView_5);
             this.Controls.Add(this.dataGridView_4);
@@ -256,5 +268,6 @@
         private DataGridView dataGridView_4;
         private DataGridView dataGridView_5;
         private Label timeLabel;
+        private Button UsbBtn;
     }
 }

@@ -34,8 +34,8 @@ namespace test1
                 OpenConnection();
             }
             ApplicationConfiguration.Initialize();
-           // Application.Run(new Form1());
-             Application.Run(new UsbTestForm());
+            Application.Run(new Form1());
+           //  Application.Run(new UsbTestForm());
         }
 
         static void WebDataThread()

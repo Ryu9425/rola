@@ -380,5 +380,17 @@ namespace test1
             [System.Runtime.InteropServices.DllImport("user32.dll", CharSet = System.Runtime.InteropServices.CharSet.Auto)]
             static extern IntPtr SendMessage(IntPtr hWnd, UInt32 Msg, IntPtr wParam, IntPtr lParam);
         }
+
+        private void UsbBtn_Click(object sender, EventArgs e)
+        {
+            UsbController usbController = new UsbController();
+            if (!usbController.ComPortOpen()) return;
+            if (!usbController.TransIotInit()) return;
+            if (!usbController.NopCommand()) return;
+
+            string sensor_receive_start = usbController.SensorConnection();
+            if(sensor_receive_start=="date_error") return;
+            //usbController.AllSenorData();
+        }
     }
 }

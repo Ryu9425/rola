@@ -15,6 +15,7 @@ using ComInterface;
 using System.Net;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
+using System.Text.RegularExpressions;
 
 namespace test1
 {
@@ -141,8 +142,96 @@ namespace test1
 
             // }
             // MessageBox.Show("test  "+test);
+
+            string output = Regex.Replace(recvStr, @"[^\u0002\u0003\u000A\u000D\u0020-\u007E]", "*");
             recvStr = recvStr.Substring(0, recvStr.Length - 3);
             MessageBox.Show("connection status : " + recvStr);
+            this.GetStartEndDate(recvStr);
+        }
+
+        public void NopCommand()
+        {
+            command_no++;
+            string hexid = $"{command_no:X2}";
+
+            physics_address = this.GetPhysicalAddresses()[0].ToString();
+            physics_address = physics_address.Substring(0, 8);
+            const string nop_data_length = "0001";
+            const string nop_code = "00";
+
+
+            string crc_cal_part = physics_address + hexid + conn_format_code + nop_data_length +
+                nop_code;
+            MessageBox.Show("crc_cal: " + crc_cal_part);
+            //crc_cal_part = "44032c7a01ff00140500013230323231323138313431393237303030";
+
+            byte[] crc_body = StringToByteArray(crc_cal_part);
+            ushort crc_part = Crc16Ccitt(crc_body);
+
+            string crc_part_hex = crc_part.ToString("X2");
+            MessageBox.Show("crc_check: " + crc_part_hex);
+
+            string base64PreStr = crc_cal_part + crc_part_hex;
+
+            byte[] convertedByte = StringToByteArray(base64PreStr);
+            string hex = System.Convert.ToBase64String(convertedByte);
+            string cmdBuf = Base64ToHexadecimal(hex);
+
+            string total_result = conn_data_stx + cmdBuf + conn_data_etx;
+
+            MessageBox.Show(total_result);
+
+            byte[] total_bites = StringToByteArray(total_result);
+
+            _IoTIF.WriteBytes(total_bites);
+
+            const int HT03_COM_TIMEOUT = 1000;
+
+            var sw = new Stopwatch();
+            sw.Restart();
+
+            string recvStr = string.Empty;
+            do
+            {
+                if (sw.ElapsedMilliseconds > HT03_COM_TIMEOUT)
+                {
+                    sw.Stop();
+                    throw new ApplicationException("connect: データ送信の応答待ちでタイムアウト");
+                }
+                System.Threading.Thread.Sleep(1);
+                var recvBuf = _IoTIF.ReadBytes();
+                recvStr += Encoding.ASCII.GetString(recvBuf);
+            } while (!recvStr.EndsWith("\n"));
+
+            // string test = "";
+
+            // foreach (var t in recvStr.Trim())
+            // {
+            //     test+=t+"=";
+
+            // }
+            // MessageBox.Show("test  "+test);
+            recvStr = recvStr.Substring(0, recvStr.Length - 3);
+            MessageBox.Show("connection status : " + recvStr);
+
+        }
+        public void GetStartEndDate(string latest_recvStr)
+        {
+            latest_recvStr = "lcDv7AH/AAoGBS2VXbstlV5k/AM=";
+            byte[] bytes = Convert.FromBase64String(latest_recvStr);
+            string hex = BitConverter.ToString(bytes);
+            string start_date_hex_str = bytes[10].ToString("x2") + bytes[11].ToString("x2");
+            string start_time_hex_str = bytes[12].ToString("x2") + bytes[13].ToString("x2");
+
+            string end_date_hex_str = bytes[10].ToString("x2") + bytes[11].ToString("x2");
+            string end_time_hex_str = bytes[12].ToString("x2") + bytes[13].ToString("x2");
+
+            string start_date = this.GetDate(start_date_hex_str) + " " + this.GetTime(start_time_hex_str);
+            string end_date = this.GetDate(end_date_hex_str) + " " + this.GetTime(end_time_hex_str);
+
+
+            MessageBox.Show("start: " + start_date + " end: " + end_date);
+            return;
         }
 
         private void SensorDatas()
@@ -298,33 +387,39 @@ namespace test1
             } while (sw.ElapsedMilliseconds < NEWEST_COM_TIMEOUT);
 
             string[] second_strs = recvStr.Split("\u0003", StringSplitOptions.RemoveEmptyEntries);
-            string first_recvStr = second_strs[0];
+            MessageBox.Show("sensor result data: " + recvStr);
 
-            MessageBox.Show("sensor result data: " + recvStr + " :  first :" + first_recvStr);
+            for (int i = 1; i < second_strs.Length; i++)
+            {
+                string data_str = second_strs[i];
+
+                MessageBox.Show("data: i=> " + i.ToString() + " :  data :" + data_str);
+                if(data_str.Length>39)this.GettingDetailData(data_str);
+            }
         }
 
         public void GettingDetailData(string receive_sensor_data)
         {
-            receive_sensor_data = "1cDv7AMCABuhuS7wBQECAAEAAQN6FPoexz+uNX1HGSwhAUIPHg==";
+            receive_sensor_data = "lcDv7AMCABuhuS7wBQECAAEAAQN6FPoexz+uNX1HGSwhAUIPHg==";
             /*1cDv7AMCABuhuS7wBQECAAEAAQN6FPoexz+uNX1HGSwhAUIPHg==*/
 
             byte[] bytes = Convert.FromBase64String(receive_sensor_data);
 
-            int seq = Convert.ToInt32(bytes[4]);
-            int str_index = Convert.ToInt32(bytes[5]);
-            int num = Convert.ToInt32(bytes[6]);
-            string _uuid = receive_sensor_data.Substring(0, 4);
-            int data_id = int.Parse(bytes[7].ToString("x2") + bytes[8].ToString("x2"), System.Globalization.NumberStyles.HexNumber);
-            int newest_id = int.Parse(bytes[9].ToString("x2") + bytes[10].ToString("x2"), System.Globalization.NumberStyles.HexNumber);
-            int gradient_int = int.Parse(bytes[11].ToString("x2") + bytes[12].ToString("x2"), System.Globalization.NumberStyles.HexNumber);
-            int temperature_int = int.Parse(bytes[13].ToString("x2") + bytes[14].ToString("x2"), System.Globalization.NumberStyles.HexNumber);
-            int humidity_int = int.Parse(bytes[15].ToString("x2") + bytes[16].ToString("x2"), System.Globalization.NumberStyles.HexNumber);
-            int pressure_int = int.Parse(bytes[17].ToString("x2") + bytes[18].ToString("x2"), System.Globalization.NumberStyles.HexNumber);
-            int voltage_int = int.Parse(bytes[19].ToString("x2") + bytes[20].ToString("x2"), System.Globalization.NumberStyles.HexNumber);
+            int seq = Convert.ToInt32(bytes[12]);
+            int str_index = Convert.ToInt32(bytes[17]);
+            int num = Convert.ToInt32(bytes[14]);
+            string _uuid = bytes[8].ToString("x2") + bytes[9].ToString("x2") + bytes[10].ToString("x2") + bytes[11].ToString("x2");
+            int data_id = int.Parse(bytes[15].ToString("x2") + bytes[16].ToString("x2"), System.Globalization.NumberStyles.HexNumber);
+            int newest_id = int.Parse(bytes[17].ToString("x2") + bytes[18].ToString("x2"), System.Globalization.NumberStyles.HexNumber);
+            int gradient_int = int.Parse(bytes[19].ToString("x2") + bytes[20].ToString("x2"), System.Globalization.NumberStyles.HexNumber);
+            int temperature_int = int.Parse(bytes[21].ToString("x2") + bytes[22].ToString("x2"), System.Globalization.NumberStyles.HexNumber);
+            int humidity_int = int.Parse(bytes[23].ToString("x2") + bytes[24].ToString("x2"), System.Globalization.NumberStyles.HexNumber);
+            int pressure_int = int.Parse(bytes[25].ToString("x2") + bytes[26].ToString("x2"), System.Globalization.NumberStyles.HexNumber);
+            int voltage_int = int.Parse(bytes[27].ToString("x2") + bytes[28].ToString("x2"), System.Globalization.NumberStyles.HexNumber);
 
-            string csq = bytes[21].ToString("x2") + bytes[22].ToString("x2");
-            string date_hex = bytes[21].ToString("x2") + bytes[22].ToString("x2");
-            string time_hex = bytes[23].ToString("x2") + bytes[24].ToString("x2");
+            string csq = bytes[29].ToString("x2") + bytes[30].ToString("x2");
+            string date_hex = bytes[31].ToString("x2") + bytes[32].ToString("x2");
+            string time_hex = bytes[33].ToString("x2") + bytes[34].ToString("x2");
 
 
             string temperature = string.Format("{0:N2}", temperature_int / 256.0f);
@@ -344,7 +439,6 @@ namespace test1
             MessageBox.Show(_uuid + ":" + data_id + ":" + temperature + ":" + humidity + ":" + voltage + ":"
                            + pressure + ":" + gradient + ":" + sensor_time + ":" + date_time);
 
-            return;
             try
             {
                 var cmd = Program.m_dbConnection.CreateCommand();
@@ -359,7 +453,7 @@ namespace test1
                     if (myreader == 0)
                     {
                         var insert_display_cmd = Program.m_dbConnection.CreateCommand();
-                        string inser_sensor_sql = "INSERT INTO app_display('temperature','humidity','voltage','pressure','gradient','uuid','sensor_time','datetime') VALUES('"
+                        string inser_sensor_sql = "INSERT INTO display('temperature','humidity','voltage','pressure','gradient','uuid','sensor_time','datetime') VALUES('"
                             + temperature + "', '" + humidity + "','" + voltage + "','" + pressure + "','" + gradient + "','" + _uuid + "','" + sensor_time + "','" + date_time + "')";
 
                         insert_display_cmd.CommandText = inser_sensor_sql;
@@ -376,7 +470,7 @@ namespace test1
 
         public string GetDate(string _hex)
         {
-            string result = "";          
+            string result = "";
             int _decimal = int.Parse(_hex, System.Globalization.NumberStyles.HexNumber);
             var value = Convert.ToString(_decimal, 2).PadLeft(15, '0');
             var year_binary = value.Substring(0, 6);
@@ -488,14 +582,13 @@ namespace test1
             MessageBox.Show(date_time);
 
             char[] values = date_time.ToCharArray();
-            //  List<string> hexDateTimeOutputList = new List<string>();
             foreach (char letter in values)
             {
                 // Get the integral value of the character.
                 int value = Convert.ToInt32(letter);
                 // Convert the decimal value to a hexadecimal value in string form.
                 string hexOutput = String.Format("{0:X}", value);
-                //hexDateTimeOutputList.Add(hexOutput);
+
                 datetimeconvert += hexOutput;
             }
 
