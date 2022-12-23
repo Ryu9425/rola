@@ -58,7 +58,6 @@ namespace test1
         {
             // MessageBox.Show("test");return true;
 
-
             _IoTIF = new CommCdcDirect();
             ((CommCdcDirect)_IoTIF).PortName = "IoTデバイス";
             ((CommCdcDirect)_IoTIF).ComPort = _ComPort_Iot;
@@ -163,7 +162,7 @@ namespace test1
             return this.GetStartEndDate(first_recvStr);
         }
 
-        public void GetChildSensorData(int _childId)
+        public bool GetChildSensorData(int _childId)
         {
             // string result = "";
             command_no++;
@@ -235,11 +234,14 @@ namespace test1
             {
                 second_str = second_strs[0];
                 MessageBox.Show("Please try it after a minute: " + second_str);
-                return;
+                return false;
             }
 
             string newest_id = this.GetNewestId(second_str, _childId);
-            if (newest_id != "error") this.NewestSensorData(newest_id, _childId);
+            MessageBox.Show("newset_id "+newest_id);
+            if (newest_id != "error")
+                this.NewestSensorData(newest_id, _childId);
+            return true;
         }
 
         public string GetNewestId(string latest_recvStr, int _childId)
@@ -392,7 +394,7 @@ namespace test1
             string cmdBuf = Base64ToHexadecimal(hex);
             string total_result = conn_data_stx + cmdBuf + conn_data_etx;
 
-            MessageBox.Show(total_result);
+            MessageBox.Show("NewestSensorData "+ child_id_no.ToString() +"  :: "+total_result);
 
             byte[] total_bites = StringToByteArray(total_result);
 
@@ -798,13 +800,15 @@ namespace test1
         }
 
 
-        public void AllSenorData()
+        public bool AllSenorData()
         {
-            // TransIotInit();
+            bool is_non_data=false;
             for (int i = 0; i < 4; i++)
             {
-                GetChildSensorData(i + 1);
+               is_non_data =  GetChildSensorData(i + 1);
+               
             }
+            return is_non_data;
         }
     }
 }

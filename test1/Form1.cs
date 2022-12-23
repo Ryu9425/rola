@@ -12,11 +12,14 @@ namespace test1
     {
         string[] itemLists = { "傾斜", "気温", "湿度", "気圧", "電池電圧" };
         public System.Windows.Forms.Timer timer;
-        public System.Timers.Timer usb_timer;
+        List<KeyUUID> key_uuid_list = new List<KeyUUID>();
+
+        //usb data process
+        public UsbController usbController;
+        public Thread usb_thread;
+        public System.Timers.Timer usb_total_timer, usb_new_data_timer;
         public string started_time = string.Empty;
         public bool is_port_opened = false;
-
-        List<KeyUUID> key_uuid_list = new List<KeyUUID>();
 
         public Form1()
         {
@@ -33,9 +36,6 @@ namespace test1
             timer.Enabled = true;
             timer.Start();
 
-            usb_timer = new System.Timers.Timer();
-            usb_timer.AutoReset = false;
-            usb_timer.Enabled = true;
         }
 
         public void DisplayDataUpdate(object sender, EventArgs e)
@@ -390,44 +390,99 @@ namespace test1
 
         private void UsbBtn_Click(object sender, EventArgs e)
         {
-            UsbController usbController = new UsbController();
+            usb_thread = new Thread(UsbDataProcessing);
+            usb_thread.IsBackground = true;
+            usb_thread.Start();
+
+            usb_total_timer = new System.Timers.Timer(900000);
+            usb_total_timer.Elapsed += usbDataStopping;
+            usb_total_timer.AutoReset = false;
+            usb_total_timer.Enabled = true;
+
+            usb_new_data_timer = new System.Timers.Timer(600000);
+            usb_new_data_timer.AutoReset = false;
+            usb_new_data_timer.Elapsed += usbNewDataReceive;
+            usb_new_data_timer.Enabled = true;
+        }
+
+        public void UsbDataProcessing()
+        {
+            usb_total_timer.Start();
+            this.UsbBtn.Enabled = false;
+
+            usbController = new UsbController();
             if (!is_port_opened)
             {
-                if (!usbController.ComPortOpen())
+                if (!usbController.ComPortOpen() || !usbController.TransIotInit() || !usbController.NopCommand())
+                {
+                    MessageBox.Show("Port Init is failed!");
+                    this.UsbBtn.Enabled = true;
                     return;
+                }
                 else
                 {
-                    if (!usbController.TransIotInit()) return;
-                    if (!usbController.NopCommand()) return;
                     is_port_opened = true;
                 }
             }
+            System.Threading.Thread.Sleep(200);
+
             if (started_time == string.Empty)
             {
                 string sensor_receive_start = usbController.SensorConnection();
                 if (sensor_receive_start == "date_error")
+                {
+                    this.UsbBtn.Enabled = false;
                     return;
+                }
                 else
                 {
                     started_time = sensor_receive_start;
+                    usb_new_data_timer.Start();
                 }
 
             }
-            DateTime current_datetime = DateTime.Now;
-            string _date = started_time.Split(" ")[0];
-            string _time = started_time.Split(" ")[1];
-            DateTime stated_datetime = new DateTime(Convert.ToInt32(_date.Split("-")[0]), Convert.ToInt32(_date.Split("-")[0]), Convert.ToInt32(_date.Split("-")[0]),
-                         Convert.ToInt32(_time.Split(":")[0]), Convert.ToInt32(_time.Split(":")[0]), Convert.ToInt32(_time.Split(":")[0]));
+            /*  DateTime current_datetime = DateTime.Now;
+              string _date = started_time.Split(" ")[0];
+              string _time = started_time.Split(" ")[1];
+              DateTime stated_datetime = new DateTime(Convert.ToInt32(_date.Split("-")[0]), Convert.ToInt32(_date.Split("-")[0]), Convert.ToInt32(_date.Split("-")[0]),
+                           Convert.ToInt32(_time.Split(":")[0]), Convert.ToInt32(_time.Split(":")[0]), Convert.ToInt32(_time.Split(":")[0]));
 
-            if ((current_datetime - stated_datetime).Seconds < 300)
+              if ((current_datetime - stated_datetime).Seconds < 300)
+              {
+                  usbController.AllSenorData();
+              }
+              else
+              {
+                  started_time = string.Empty;
+              }*/
+        }
+
+        public void usbDataStopping(object sender, EventArgs e)
+        {
+            this.UsbBtn.Enabled = true;
+            started_time = string.Empty;
+            usb_total_timer.Enabled = false;
+            usb_new_data_timer.Enabled = false;
+            usb_new_data_timer = null;
+            usb_total_timer = null;
+        }
+        public void usbNewDataReceive(object sender, EventArgs e)
+        {
+            bool is_received = false;
+            do
             {
-                usbController.AllSenorData();
+                System.Threading.Thread.Sleep(30000);
+                is_received = usbController.AllSenorData();
+            } while (started_time != string.Empty && !is_received);
+            started_time = string.Empty;
+            if (is_received)
+            {
+                MessageBox.Show("Usb Data Reception Successful!");
             }
             else
             {
-                started_time = string.Empty;
+                MessageBox.Show("Usb Data Reception Failed!");
             }
-            //usbController.AllSenorData();
         }
     }
 }
