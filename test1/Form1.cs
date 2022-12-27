@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Reflection;
 using System.Collections;
 using System.Collections.Generic;
@@ -5,6 +6,7 @@ using System.Data.SQLite;
 using System.Data;
 using System.Windows.Forms;
 using System.Xml.Linq;
+using System.Windows;
 
 namespace test1
 {
@@ -12,6 +14,7 @@ namespace test1
     {
         string[] itemLists = { "傾斜", "気温", "湿度", "気圧", "電池電圧" };
         public System.Windows.Forms.Timer timer;
+
         List<KeyUUID> key_uuid_list = new List<KeyUUID>();
 
         //usb data process
@@ -20,6 +23,8 @@ namespace test1
         public System.Timers.Timer usb_total_timer, usb_new_data_timer;
         public string started_time = string.Empty;
         public bool is_port_opened = false;
+
+        Form3 sensor_info;
 
         public Form1()
         {
@@ -36,6 +41,7 @@ namespace test1
             timer.Enabled = true;
             timer.Start();
 
+            sensor_info = new Form3();
         }
 
         public void DisplayDataUpdate(object sender, EventArgs e)
@@ -399,7 +405,7 @@ namespace test1
             usb_total_timer.AutoReset = false;
             usb_total_timer.Enabled = true;
 
-            usb_new_data_timer = new System.Timers.Timer(600000);
+            usb_new_data_timer = new System.Timers.Timer(630000);
             usb_new_data_timer.AutoReset = false;
             usb_new_data_timer.Elapsed += usbNewDataReceive;
             usb_new_data_timer.Enabled = true;
@@ -431,34 +437,28 @@ namespace test1
                 string sensor_receive_start = usbController.SensorConnection();
                 if (sensor_receive_start == "date_error")
                 {
-                    this.UsbBtn.Enabled = false;
+                    this.UsbBtn.Enabled = true;
                     return;
                 }
                 else
                 {
-                    started_time = sensor_receive_start;
+                    started_time = sensor_receive_start.Split(";")[0];
+                    string end_time = sensor_receive_start.Split(";")[1];
+
+                    sensor_info.SettingDates(started_time, end_time);
+                    sensor_info.Show();
+                    sensor_info.Location = new Point(this.Location.X + this.Size.Width / 2 - sensor_info.Size.Width / 2,
+                                              this.Location.Y + this.Size.Height / 2 - sensor_info.Size.Height / 2);
+
                     usb_new_data_timer.Start();
                 }
 
             }
-            /*  DateTime current_datetime = DateTime.Now;
-              string _date = started_time.Split(" ")[0];
-              string _time = started_time.Split(" ")[1];
-              DateTime stated_datetime = new DateTime(Convert.ToInt32(_date.Split("-")[0]), Convert.ToInt32(_date.Split("-")[0]), Convert.ToInt32(_date.Split("-")[0]),
-                           Convert.ToInt32(_time.Split(":")[0]), Convert.ToInt32(_time.Split(":")[0]), Convert.ToInt32(_time.Split(":")[0]));
-
-              if ((current_datetime - stated_datetime).Seconds < 300)
-              {
-                  usbController.AllSenorData();
-              }
-              else
-              {
-                  started_time = string.Empty;
-              }*/
         }
 
         public void usbDataStopping(object sender, EventArgs e)
         {
+            MessageBox.Show("usbDataStopping");
             this.UsbBtn.Enabled = true;
             started_time = string.Empty;
             usb_total_timer.Enabled = false;
@@ -468,21 +468,9 @@ namespace test1
         }
         public void usbNewDataReceive(object sender, EventArgs e)
         {
-            bool is_received = false;
-            do
-            {
-                System.Threading.Thread.Sleep(30000);
-                is_received = usbController.AllSenorData();
-            } while (started_time != string.Empty && !is_received);
-            started_time = string.Empty;
-            if (is_received)
-            {
-                MessageBox.Show("Usb Data Reception Successful!");
-            }
-            else
-            {
-                MessageBox.Show("Usb Data Reception Failed!");
-            }
+            sensor_info.Hide();
+            MessageBox.Show("usbNewDataReceive");
+            usbController.AllSenorData();
         }
     }
 }

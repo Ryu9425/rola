@@ -30,18 +30,22 @@ namespace test1
         const string conn_data_etx = "030d0a";
 
         const string sensor_data_count = "18";
-        const string sensor_total_data = "00ff";
+        const string sensor_latest_count = "01";
+        const string sensor_total_data = "ffff";
         const string sensor_total_length = "0005";
         const string sensor_command = "50";
+
 
         public string physics_address;
 
         public UsbController()
         {
-            //  ComPortOpen();
+
+            // ComPortOpen();
             //  TransIotInit();
-            //  NopCommand();
+            // NopCommand();
             //SensorDatas();
+
         }
 
         private const string _logPrefix = "IoTTrans";
@@ -54,10 +58,9 @@ namespace test1
         private System.IO.Ports.Parity _Parity_IoT = System.IO.Ports.Parity.None;
         private System.IO.Ports.StopBits _StopBits_IoT = System.IO.Ports.StopBits.One;
 
+
         public bool ComPortOpen()
         {
-            // MessageBox.Show("test");return true;
-
             _IoTIF = new CommCdcDirect();
             ((CommCdcDirect)_IoTIF).PortName = "IoTデバイス";
             ((CommCdcDirect)_IoTIF).ComPort = _ComPort_Iot;
@@ -70,12 +73,11 @@ namespace test1
             {
                 // IoTデバイスオープン    device open
                 _IoTIF.Open();
-                MessageBox.Show("ComPortOpen");
                 return true;
             }
             catch (System.Exception)
             {
-                MessageBox.Show("Com6 port not opened!");
+                throw;
                 return false;
             }
         }
@@ -92,14 +94,11 @@ namespace test1
 
             string crc_cal_part = physics_address + hexid + conn_format_code + conn_data_length +
                   conn_request_code + child_sensor_count + date_time_hex;
-            //  MessageBox.Show("--------------------crc_cal: " + crc_cal_part);
-            //crc_cal_part = "44032c7a01ff00140500013230323231323138313431393237303030";
 
             byte[] crc_body = StringToByteArray(crc_cal_part);
             ushort crc_part = Crc16Ccitt(crc_body);
 
-            string crc_part_hex = crc_part.ToString("X2");
-            // MessageBox.Show("crc_check: " + crc_part_hex);
+            string crc_part_hex = crc_part.ToString("X4");
 
             string base64PreStr = crc_cal_part + crc_part_hex;
 
@@ -111,14 +110,9 @@ namespace test1
 
             string total_result = conn_data_stx + cmdBuf + conn_data_etx;
 
-
-            //   MessageBox.Show(total_result);return "test";
-
-
             byte[] total_bites = StringToByteArray(total_result);
 
             _IoTIF.WriteBytes(total_bites);
-
 
             const int HT03_COM_TIMEOUT = 1000;
 
@@ -142,13 +136,13 @@ namespace test1
             recvStr = recvStr.Replace("\u0002", "")
                 .Replace("\u0003", "")
                 .Replace("\u000D", "");
-            MessageBox.Show("output data: " + recvStr);
+            //  MessageBox.Show("output data: "+ recvStr);
 
 
             string[] second_strs = recvStr.Split("\u000A", StringSplitOptions.RemoveEmptyEntries);
             string first_recvStr = second_strs[0];
 
-            MessageBox.Show("trim connect data: " + recvStr + " :  first :" + first_recvStr);
+            //   MessageBox.Show("trim connect data: " + recvStr + " :  first :" + first_recvStr);
 
             string test = "";
 
@@ -157,14 +151,14 @@ namespace test1
                 test += t + ">";
 
             }
-            MessageBox.Show("first_recvStr  " + test);
-            MessageBox.Show("connection status : " + first_recvStr);
+            //      MessageBox.Show("first_recvStr  " + test);
+            //      MessageBox.Show("connection status : " + first_recvStr);
             return this.GetStartEndDate(first_recvStr);
         }
 
         public bool GetChildSensorData(int _childId)
         {
-            // string result = "";
+            string result = "";
             command_no++;
             // command_no = 2;
             string hexid = $"{command_no:X2}";
@@ -178,7 +172,7 @@ namespace test1
             physics_address = physics_address.Substring(0, 8);
 
             string crc_cal_part = physics_address + hexid + conn_format_code + sensor_total_length
-                               + sensor_command + child_id + sensor_total_data + sensor_data_count;
+                               + sensor_command + child_id + sensor_total_data + sensor_latest_count;
 
             // MessageBox.Show("crc_cal: " + crc_cal_part);
             //crc_cal_part = "44032c7a01ff00140500013230323231323138313431393237303030";
@@ -186,16 +180,18 @@ namespace test1
             byte[] crc_body = StringToByteArray(crc_cal_part);
             ushort crc_part = Crc16Ccitt(crc_body);
 
-            string crc_part_hex = crc_part.ToString("X2");
+            string crc_part_hex = crc_part.ToString("X4");
             // MessageBox.Show("crc_check: " + crc_part_hex);
 
             string base64PreStr = crc_cal_part + crc_part_hex;
 
-            string stringToConvert = "44032c7a01ff001405000132303232313231383134313932373030304741";
+            //  string stringToConvert = "44032c7a01ff001405000132303232313231383134313932373030304741";
+            // MessageBox.Show("base64PreStr: " + base64PreStr);
 
             byte[] convertedByte = StringToByteArray(base64PreStr);
             string hex = System.Convert.ToBase64String(convertedByte);
             string cmdBuf = Base64ToHexadecimal(hex);
+            // MessageBox.Show("cmdBuf"+ cmdBuf);
 
             string total_result = conn_data_stx + cmdBuf + conn_data_etx;
 
@@ -205,81 +201,90 @@ namespace test1
 
             _IoTIF.WriteBytes(total_bites);
 
+
+            const int HT03_COM_TIMEOUT = 6000;
+
             var sw = new Stopwatch();
-            sw.Restart();
+            //sw.Restart();
+
             string recvStr = string.Empty;
 
             do
             {
-                System.Threading.Thread.Sleep(1);
-                var recvBuf = _IoTIF.ReadBytes();
-                recvStr += Encoding.ASCII.GetString(recvBuf);
-            } while (sw.ElapsedMilliseconds < 1500);
+                byte read_byte = _IoTIF.ReadByte(out bool _isRecv);
+                if (_isRecv == false)
+                {
+                    if (!sw.IsRunning) sw.Restart();
+                    // continue;
+                }
+                else
+                {
+                    sw.Reset();
+                    System.Threading.Thread.Sleep(1);
+                    var recvBuf = _IoTIF.ReadBytes();
+                    recvStr += Encoding.ASCII.GetString(recvBuf);
+                }
+            } while (sw.ElapsedMilliseconds < HT03_COM_TIMEOUT);
 
             recvStr = recvStr.Replace("\u0002", "")
               .Replace("\u000A", "")
               .Replace("\u000D", "");
 
-            // MessageBox.Show("received sensor data no" + recvStr.ToString());
+            //  MessageBox.Show("received sensor data no " + _childId.ToString());
 
             string[] second_strs = recvStr.Split("\u0003", StringSplitOptions.RemoveEmptyEntries);
-            //  MessageBox.Show("received sensor data count  : " + second_strs.Length.ToString());
+            //  MessageBox.Show("received sensor data count  : " + second_strs.Length.ToString() );
             string second_str = "";
             if (second_strs.Length > 1)
             {
                 second_str = second_strs[1];
-                MessageBox.Show("received sensor data  : " + second_strs.Length.ToString() + " second: " + second_str);
+                //  MessageBox.Show("received sensor data  : " + second_strs.Length.ToString() + " second: " + second_str);
             }
             else
             {
                 second_str = second_strs[0];
-                MessageBox.Show("Please try it after a minute: " + second_str);
+                //  MessageBox.Show("Please try it after a minute: "+ recvStr);
                 return false;
             }
 
+
             string newest_id = this.GetNewestId(second_str, _childId);
-            MessageBox.Show("newset_id "+newest_id);
+            //  MessageBox.Show("new_id: " + newest_id);
             if (newest_id != "error")
                 this.NewestSensorData(newest_id, _childId);
+            else
+                return false;
+
             return true;
         }
 
         public string GetNewestId(string latest_recvStr, int _childId)
         {
-            //  MessageBox.Show("newstid: " + latest_recvStr);
+            //  MessageBox.Show("GetNewestId: " + latest_recvStr);
             string test = "";
 
-            /*   latest_recvStr = latest_recvStr.Substring(1, latest_recvStr.Length - 1);
+            //   latest_recvStr = latest_recvStr.Substring(1, latest_recvStr.Length - 1);
 
 
-               foreach (var t in latest_recvStr.Trim())
-               {
-                   test += t + ">";
+            foreach (var t in latest_recvStr.Trim())
+            {
+                test += t + ">";
 
-               }
+            }
 
-               MessageBox.Show("newstid test: " + test);*/
+            //   MessageBox.Show("newstid test: " + test);
 
             // latest_recvStr = "lcDv7BoCABuhuS7wAgAAAG4AiQAAAAAAAAAAD/9HDywhAABbtg==";
-            try
-            {
-                byte[] bytes = Convert.FromBase64String(latest_recvStr);
-                string hex = BitConverter.ToString(bytes);
-                string newest_hex_str = bytes[17].ToString("x2") + bytes[18].ToString("x2");
-                int diff = int.Parse(newest_hex_str, System.Globalization.NumberStyles.HexNumber) - Convert.ToInt32((byte)0x0018);
+            byte[] bytes = Convert.FromBase64String(latest_recvStr);
+            string hex = BitConverter.ToString(bytes);
+            string newest_hex_str = bytes[17].ToString("x2") + bytes[18].ToString("x2");
+            int diff = int.Parse(newest_hex_str, System.Globalization.NumberStyles.HexNumber) - Convert.ToInt32((byte)0x0018);
 
-                //int diff = int.Parse("0089", System.Globalization.NumberStyles.HexNumber) - Convert.ToInt32((byte)0x0018);
-                string diff_str = (diff + 1).ToString("x4");
+            //int diff = int.Parse("0089", System.Globalization.NumberStyles.HexNumber) - Convert.ToInt32((byte)0x0018);
+            string diff_str = diff < 0 ? "0000" : (diff + 1).ToString("x4");
 
-                // MessageBox.Show("latest: " + hex + " new: " + newest_hex_str + " test  " + diff_str);
-                return diff_str;
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("No Latest Sensor " + _childId.ToString());
-                return "error";
-            }
-
+            //   MessageBox.Show("latest: " + hex + " new: " + newest_hex_str + " test  " + diff_str);
+            return diff_str;
         }
         public bool NopCommand()
         {
@@ -294,14 +299,14 @@ namespace test1
 
             string crc_cal_part = physics_address + hexid + conn_format_code + nop_data_length +
                 nop_code;
-            // MessageBox.Show("crc_cal: " + crc_cal_part);
+            //MessageBox.Show("crc_cal: " + crc_cal_part);
             //crc_cal_part = "44032c7a01ff00140500013230323231323138313431393237303030";
 
             byte[] crc_body = StringToByteArray(crc_cal_part);
             ushort crc_part = Crc16Ccitt(crc_body);
 
-            string crc_part_hex = crc_part.ToString("X2");
-            //  MessageBox.Show("crc_check: " + crc_part_hex);
+            string crc_part_hex = crc_part.ToString("X4");
+            // MessageBox.Show("crc_check: " + crc_part_hex);
 
             string base64PreStr = crc_cal_part + crc_part_hex;
 
@@ -311,11 +316,7 @@ namespace test1
 
             string total_result = conn_data_stx + cmdBuf + conn_data_etx;
 
-
-
-            //  MessageBox.Show(total_result); return true;
-
-
+            //  MessageBox.Show(total_result);
 
             byte[] total_bites = StringToByteArray(total_result);
 
@@ -340,14 +341,21 @@ namespace test1
                 recvStr += Encoding.ASCII.GetString(recvBuf);
             } while (!recvStr.EndsWith("\n"));
 
+            // string test = "";
+
+            // foreach (var t in recvStr.Trim())
+            // {
+            //     test+=t+"=";
+
+            // }
+            // MessageBox.Show("test  "+test);
             recvStr = recvStr.Substring(0, recvStr.Length - 3);
-            MessageBox.Show("nop status : " + recvStr);
+            //   MessageBox.Show("nop status : " + recvStr);
             return true;
         }
-
         public string GetStartEndDate(string latest_recvStr)
         {
-            //latest_recvStr = "lcDv7AL/AAoGBS2Ve+ctlXyPe5E=";  
+            //latest_recvStr = "lcDv7AL/AAoGBS2Ve+ctlXyPe5E=";            
             try
             {
                 byte[] bytes = Convert.FromBase64String(latest_recvStr);
@@ -361,30 +369,39 @@ namespace test1
                 string start_date = this.GetDate(start_date_hex_str) + " " + this.GetTime(start_time_hex_str);
                 string end_date = this.GetDate(end_date_hex_str) + " " + this.GetTime(end_time_hex_str);
 
-                MessageBox.Show(" Sensor Data Receive time:: start: " + start_date + " end: " + end_date);
-                return start_date;
+                //    MessageBox.Show(" Sensor Data Receive time:: start: " + start_date + " end: " + end_date);
+                return start_date + ";" + end_date;
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Please reset and try it!");
+                //    MessageBox.Show("Please reset and try it!");
                 return "date_error";
             }
         }
+
 
         public void NewestSensorData(string newest_id, int child_id_no)
         {
             string result_infos = "";
             command_no++;
+            // command_no = 2;
             string hexid = $"{command_no:X2}";
+
+            //int child_id_no = 2;
+
             string child_id = $"{child_id_no:X2}";
+
+            // physics_address = "44032c7a";
 
             string crc_cal_part = physics_address + hexid + conn_format_code + sensor_total_length
                                + sensor_command + child_id + newest_id + sensor_data_count;
 
+            // MessageBox.Show("newest crc_cal: " + crc_cal_part);
+
             byte[] crc_body = StringToByteArray(crc_cal_part);
             ushort crc_part = Crc16Ccitt(crc_body);
 
-            string crc_part_hex = crc_part.ToString("X2");
+            string crc_part_hex = crc_part.ToString("X4");
             //  MessageBox.Show("newsest crc_check: " + crc_part_hex);
 
             string base64PreStr = crc_cal_part + crc_part_hex;
@@ -392,9 +409,10 @@ namespace test1
             byte[] convertedByte = StringToByteArray(base64PreStr);
             string hex = System.Convert.ToBase64String(convertedByte);
             string cmdBuf = Base64ToHexadecimal(hex);
+
             string total_result = conn_data_stx + cmdBuf + conn_data_etx;
 
-            MessageBox.Show("NewestSensorData "+ child_id_no.ToString() +"  :: "+total_result);
+            //   MessageBox.Show("total_result ---->  " +  total_result);
 
             byte[] total_bites = StringToByteArray(total_result);
 
@@ -405,38 +423,44 @@ namespace test1
             var sw = new Stopwatch();
             sw.Restart();
 
+            //   MessageBox.Show("sensor result data start");
+
             string recvStr = string.Empty;
             do
             {
-                if (sw.ElapsedMilliseconds > HT03_COM_TIMEOUT)
-                {
-                    sw.Stop();
-                    throw new ApplicationException("sensor: データ送信の応答待ちでタイムアウト");
-                }
+                // if (sw.ElapsedMilliseconds > HT03_COM_TIMEOUT)
+                // {
+                //     sw.Stop();
+                //     throw new ApplicationException("sensor: データ送信の応答待ちでタイムアウト");
+                // }
+                // MessageBox.Show("doing");
                 System.Threading.Thread.Sleep(1);
                 var recvBuf = _IoTIF.ReadBytes();
                 recvStr += Encoding.ASCII.GetString(recvBuf);
-            } while (sw.ElapsedMilliseconds < HT03_COM_TIMEOUT);
+            } while (sw.ElapsedMilliseconds < 32000);
+
+            //     MessageBox.Show("sensor result data: 1 " + recvStr);
 
             recvStr = recvStr.Replace("\u0002", "")
               .Replace("\u000A", "")
               .Replace("\u000D", "");
 
             string[] second_strs = recvStr.Split("\u0003", StringSplitOptions.RemoveEmptyEntries);
-            MessageBox.Show("sensor result data: " + recvStr);
+            //     MessageBox.Show("sensor result data: " + recvStr);
 
             for (int i = 1; i < second_strs.Length; i++)
             {
                 string data_str = second_strs[i];
 
-                // MessageBox.Show("data: i=> " + i.ToString() + " :  data :" + data_str);
-
+                //        MessageBox.Show("data: i=> " + i.ToString() + " :  data :" + data_str);
                 if (data_str.Length > 39)
                 {
+
                     result_infos += "data: child_id=> " + child_id + " :  data :" + data_str + "\r\n";
                     this.GettingDetailData(data_str);
-                }
+                };
             }
+            
             MessageBox.Show(result_infos);
         }
 
@@ -478,8 +502,9 @@ namespace test1
         public void InsertSensorData(string _uuid, string data_id, string temperature, string humidity, string voltage,
                 string pressure, string gradient, string sensor_time, string date_time)
         {
-            //   MessageBox.Show(_uuid + ":" + data_id + ":" + temperature + ":" + humidity + ":" + voltage + ":"
-            //                 + pressure + ":" + gradient + ":" + sensor_time + ":" + date_time);
+            // MessageBox.Show(_uuid + ":" + data_id + ":" + temperature + ":" + humidity + ":" + voltage + ":"
+            //                + pressure + ":" + gradient + ":" + sensor_time + ":" + date_time);
+
 
             try
             {
@@ -516,8 +541,6 @@ namespace test1
         /// </summary>
         public bool TransIotInit()
         {
-            // MessageBox.Show("start init setting status"); return true;
-
             string cmdStr;
             _IoTIF.WriteStr("echo off\r\n\x1b[?01h\r\n");
             // _IoTIF.WriteStr("\x1b[?00H\r\n");
@@ -542,11 +565,12 @@ namespace test1
                 recvStr += Encoding.ASCII.GetString(recvBuf);
             } while (!recvStr.EndsWith("\n"));
 
-            MessageBox.Show("start init setting status : " + recvStr);
+            //   MessageBox.Show("start init setting status : " + recvStr);
+            // _IoTIF.WriteStr("\x1b[?00H\r\n");
             return true;
         }
 
-        public static byte[] StringToByteArray(String hex)
+        public byte[] StringToByteArray(String hex)
         {
             int NumberChars = hex.Length;
             byte[] bytes = new byte[NumberChars / 2];
@@ -555,7 +579,7 @@ namespace test1
             return bytes;
         }
 
-        public static ushort Crc16Ccitt(byte[] bytes)
+        public ushort Crc16Ccitt(byte[] bytes)
         {
             const ushort poly = 4129;
             ushort[] table = new ushort[256];
@@ -583,12 +607,14 @@ namespace test1
             return crc;
         }
 
-        private string DateToHexConcvert()
+        public string DateToHexConcvert()
         {
             string datetimeconvert = "";
             string date_time = DateTime.Now.ToString("yyyyMMddHHmmss000");
+            //  MessageBox.Show(date_time);
 
             char[] values = date_time.ToCharArray();
+            //  List<string> hexDateTimeOutputList = new List<string>();
             foreach (char letter in values)
             {
                 // Get the integral value of the character.
@@ -603,9 +629,12 @@ namespace test1
             return datetimeconvert;
         }
 
-        private string Base64ToHexadecimal(string _base64str)
+        public string Base64ToHexadecimal(string _base64str)
         {
+
             string result = "";
+
+
             char[] values = _base64str.ToCharArray();
             foreach (char letter in values)
             {
@@ -613,12 +642,14 @@ namespace test1
                 int value = Convert.ToInt32(letter);
                 // Convert the decimal value to a hexadecimal value in string form.
                 string hexOutput = String.Format("{0:X}", value);
+                //hexDateTimeOutputList.Add(hexOutput);
                 result += hexOutput;
             }
 
-            MessageBox.Show(result);
+            //    MessageBox.Show(result);
             return result;
         }
+
 
         List<PhysicalAddress> GetPhysicalAddresses()
         {
@@ -629,86 +660,18 @@ namespace test1
             {
                 if (adapter.OperationalStatus == OperationalStatus.Up)
                 {
+                    //Console.WriteLine(adapter.Description);
+                    //Console.WriteLine(adapter.GetPhysicalAddress().ToString());                   
                     macAddresses.Add(adapter.GetPhysicalAddress());
                 }
             }
             return macAddresses;
         }
 
+
+
         private const byte PC_COMMAND_HT03_DATA = (byte)0x01;
 
-        private void TransIoT2byte(byte sqnsNo, byte ch, short data)
-        {
-            const int HT03_COM_TIMEOUT = 1000;
-
-            // データ送信
-            var cmd = new List<byte>();
-            cmd.Add(PC_COMMAND_HT03_DATA);
-            cmd.Add(sqnsNo);
-            cmd.Add(ch);
-            var dataAry = BitConverter.GetBytes(data);
-            cmd.Add(dataAry[1]);
-            cmd.Add(dataAry[0]);
-            ushort crc = Crc16Ccitt(cmd.ToArray());
-            cmd.Add(Convert.ToByte(crc >> 8));
-            cmd.Add(Convert.ToByte(crc & 0xff));
-            string base64Str = Convert.ToBase64String(cmd.ToArray());
-            string cmdStr = string.Format("@{0}\r\n", base64Str);
-            var cmdBuf = Encoding.ASCII.GetBytes(cmdStr);
-            _IoTIF.WriteBytes(cmdBuf);
-
-            // 応答確認
-            var sw = new Stopwatch();
-            sw.Restart();
-            bool? ack = null;
-            string errStr = string.Empty;
-            bool isRecving = true;
-            while (isRecving)
-            {
-                string recvStr = string.Empty;
-                do
-                {
-                    if (sw.ElapsedMilliseconds > HT03_COM_TIMEOUT)
-                    {
-                        sw.Stop();
-                        throw new ApplicationException("データ送信の応答待ちでタイムアウト");
-                    }
-                    System.Threading.Thread.Sleep(1);
-                    var recvBuf = _IoTIF.ReadBytes();
-                    recvStr += Encoding.ASCII.GetString(recvBuf);
-                } while (!recvStr.EndsWith("\n"));
-
-                if (string.IsNullOrWhiteSpace(recvStr))
-                {
-                    continue;
-                }
-                var splts = recvStr.Split("\n".ToArray()).Select(x => x.Trim());
-                foreach (string s in splts)
-                {
-                    if (!s.StartsWith("@"))
-                    {
-                        continue;
-                    }
-                    if (CheckIotRes(s.Substring(1), sqnsNo, out ack, out errStr))
-                    {
-                        isRecving = false;
-                    }
-                    else
-                    {
-
-                    }
-                }
-            }
-            sw.Stop();
-            if (ack != null && ack.Value)
-            {
-                return;
-            }
-            else
-            {
-                throw new ApplicationException(errStr);
-            }
-        }
 
         public string GetDate(string _hex)
         {
@@ -750,64 +713,15 @@ namespace test1
             return result;
         }
 
-        /// <summary>
-        /// <summary>
-        /// IoTデバイスのリプライをチェック
-        /// </summary>
-        private bool CheckIotRes(string resBase64, byte sqnsNo, out bool? ack, out string errStr)
-        {
-            const byte PC_COMMAND_ACK = (byte)0xff;
-
-            var recvBuf = Convert.FromBase64String(resBase64);
-            if (recvBuf.Length < 5)
-            {
-                ack = null;
-                errStr = "応答サイズ不正(" + string.Join(" ", recvBuf.Select(x => string.Format("{0,0:X2}", x))) + ")";
-                return false;
-            }
-            ushort crc = Crc16Ccitt(recvBuf.Take(3).ToArray());
-            if (recvBuf[recvBuf.Length - 2] != Convert.ToByte(crc >> 8) ||
-                recvBuf[recvBuf.Length - 1] != Convert.ToByte(crc & 0xff))
-            {
-                ack = null;
-                errStr = "応答データのCRC不正";
-                return false;
-            }
-            if (recvBuf[1] != PC_COMMAND_HT03_DATA)
-            {
-                ack = null;
-                errStr = "異なるコマンドの応答";
-                return false;
-            }
-            if (recvBuf[2] != sqnsNo)
-            {
-                ack = null;
-                errStr = "異なるシーケンスNo";
-                return false;
-            }
-            if (recvBuf[0] == PC_COMMAND_ACK)
-            {
-                ack = true;
-                errStr = String.Empty;
-                return true;
-            }
-            else
-            {
-                ack = false;
-                errStr = "NACK応答";
-                return true;
-            }
-        }
-
-
         public bool AllSenorData()
         {
-            bool is_non_data=false;
+            //     MessageBox.Show("AllSenorData");
+            bool is_non_data = false;
             for (int i = 0; i < 4; i++)
             {
-               is_non_data =  GetChildSensorData(i + 1);
-               
+                is_non_data = GetChildSensorData(i + 1);
             }
+
             return is_non_data;
         }
     }

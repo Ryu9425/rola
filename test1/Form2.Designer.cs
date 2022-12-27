@@ -49,7 +49,7 @@
             this.label9 = new System.Windows.Forms.Label();
             this.moduleTextBox = new System.Windows.Forms.TextBox();
             this.label10 = new System.Windows.Forms.Label();
-            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.portBox = new System.Windows.Forms.TextBox();
             this.portSearchBtn = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView)).BeginInit();
             this.SuspendLayout();
@@ -253,18 +253,18 @@
             this.label10.TabIndex = 20;
             this.label10.Text = "COM Port Name";
             // 
-            // textBox1
+            // portBox
             // 
-            this.textBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.portBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBox1.Font = new System.Drawing.Font("Segoe UI", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.textBox1.Location = new System.Drawing.Point(305, 267);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(82, 32);
-            this.textBox1.TabIndex = 21;
-            this.textBox1.Text = "COM6";
-            this.textBox1.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.portBox.Font = new System.Drawing.Font("Segoe UI", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.portBox.Location = new System.Drawing.Point(305, 267);
+            this.portBox.Name = "portBox";
+            this.portBox.Size = new System.Drawing.Size(82, 32);
+            this.portBox.TabIndex = 21;
+            this.portBox.Text = "COM6";
+            this.portBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // portSearchBtn
             // 
@@ -282,7 +282,7 @@
             this.BackColor = System.Drawing.SystemColors.ControlLightLight;
             this.ClientSize = new System.Drawing.Size(922, 561);
             this.Controls.Add(this.portSearchBtn);
-            this.Controls.Add(this.textBox1);
+            this.Controls.Add(this.portBox);
             this.Controls.Add(this.label10);
             this.Controls.Add(this.moduleTextBox);
             this.Controls.Add(this.label9);
@@ -334,7 +334,7 @@
         private Label label9;
         private TextBox moduleTextBox;
         private Label label10;
-        private TextBox textBox1;
+        private TextBox portBox;
         private Button portSearchBtn;
     }
 }

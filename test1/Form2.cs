@@ -232,11 +232,13 @@ namespace test1
                 var reader = command.ExecuteReader();
                 if (reader.Read())
                 {
-                    apiBox.Text = reader.GetString(1);
-                    minuteBox.Text = reader.GetInt32(2).ToString();
-                    secondBox.Text = reader.GetInt32(3).ToString();
-                    urlBox.Text = reader.GetString(4).ToString();
-                    countBox.Text = reader.GetInt32(5).ToString();
+                    moduleTextBox.Text = reader.GetString(1);
+                    apiBox.Text = reader.GetString(2);
+                    minuteBox.Text = reader.GetInt32(3).ToString();
+                    secondBox.Text = reader.GetInt32(4).ToString();
+                    urlBox.Text = reader.GetString(5).ToString();
+                    countBox.Text = reader.GetInt32(6).ToString();
+                    portBox.Text = reader.GetString(7).ToString();
                 }
             }
             catch (System.Exception)
@@ -247,11 +249,13 @@ namespace test1
 
         private void closeBtn_Click(object sender, EventArgs e)
         {
+            string sensor_module = moduleTextBox.Text;
             string web_api = apiBox.Text;
             string diff_minute = minuteBox.Text;
             string diff_second = secondBox.Text;
             string uuid_count = countBox.Text;
             string store_path = urlBox.Text;
+            string port_name = portBox.Text;
 
             if (CheckParseStrToInt(diff_minute) == false || CheckParseStrToInt(diff_second) == false
                 || CheckParseStrToInt(uuid_count) == false)
@@ -260,10 +264,10 @@ namespace test1
                 return;
             }
 
-            if (web_api == "" || CheckParseStrToInt(diff_second) == false
+            if (sensor_module == "" || web_api == "" || port_name == "" || CheckParseStrToInt(diff_second) == false
                 || CheckParseStrToInt(uuid_count) == false)
             {
-                MessageBox.Show("Please Input number in minute, second, count fields");
+                MessageBox.Show("Please Input module, api, port name fields");
                 return;
             }
             if (store_path.Length < 5)
@@ -275,8 +279,8 @@ namespace test1
             try
             {
                 var command = Program.m_dbConnection.CreateCommand();
-                string update_sql = "UPDATE main_setting SET  api_url='" + web_api + "',connection_time = " + diff_minute
-                      + ", connection_interval= " + diff_second + ",store_url='" + store_path + "',display_count=" + uuid_count;
+                string update_sql = "UPDATE main_setting SET module='" + sensor_module + "', api_url='" + web_api + "',connection_time = " + diff_minute
+                      + ", connection_interval= " + diff_second + ",store_url='" + store_path + "',display_count=" + uuid_count+", port='"+port_name+"'";
 
                 command.CommandText = update_sql;
                 command.ExecuteNonQuery();
@@ -295,6 +299,6 @@ namespace test1
             Constant.is_first = true;
             this.Close();
         }
-       
+
     }
 }
