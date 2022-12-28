@@ -55,28 +55,28 @@ namespace test1
         {
             HttpClient client = new HttpClient();
 
+            string current_module = GetModule();
+
             string start_date_time = GetPreDate() == "" ? "2022-12-01 12:00:00"
                                                     : GetPreDate();
 
             using StringContent jsonContent = new(
                 JsonSerializer.Serialize(new
                 {
-                    module = "uck9JBnekzPe",
+                    //module = "uck9JBnekzPe",
+                    module = current_module,
                     datetime = start_date_time
-                    //datetime = "2022-12-01 18:00:00"
                 }),
                 Encoding.UTF8,
                 "application/json");
 
             string web_api = GetWebApi();
 
-
             using HttpResponseMessage response = await client.PostAsync("https://collapse.sakura.ne.jp/getstream.php", jsonContent);
 
             response.EnsureSuccessStatusCode();
 
             var jsonResponse = await response.Content.ReadAsStringAsync();
-
 
            // WriteWebContent(start_date_time);
 
@@ -150,6 +150,29 @@ namespace test1
 
             return date_time;
         }
+       
+        public static string GetModule(){
+            var current_module = "";
+
+            var cmd = m_dbConnection.CreateCommand();
+            string module_sql = "SELECT module FROM main_setting";
+            cmd.CommandText = module_sql;
+
+            var exist_status_reader = cmd.ExecuteReader();
+            try
+            {
+                if (exist_status_reader.Read())
+                {
+                    current_module = exist_status_reader.GetString(0);
+                }
+            }
+            catch (System.Exception ex)
+            {
+                // MessageBox.Show(ex.ToString());
+            }
+
+            return current_module;
+        }
         public static string GetWebApi()
         {
             var web_api = "";
@@ -160,12 +183,12 @@ namespace test1
             var reader = cmd.ExecuteReader();
             if (reader.Read())
             {
-                web_api = reader.GetString(1);
+                web_api = reader.GetString(2);
                 Constant.web_api = web_api;
-                Constant.connection_time = reader.GetInt32(2);
-                Constant.connection_interval = reader.GetInt32(3);
-                Constant.store_path = reader.GetString(4);
-                Constant.display_count = reader.GetInt32(5);
+                Constant.connection_time = reader.GetInt32(3);
+                Constant.connection_interval = reader.GetInt32(4);
+                Constant.store_path = reader.GetString(5);
+                Constant.display_count = reader.GetInt32(6);
             }
             return web_api;
         }

@@ -416,10 +416,12 @@ namespace test1
             usb_total_timer.Start();
             this.UsbBtn.Enabled = false;
 
+            string serial_com_port = GetSerialPort();
+
             usbController = new UsbController();
             if (!is_port_opened)
             {
-                if (!usbController.ComPortOpen() || !usbController.TransIotInit() || !usbController.NopCommand())
+                if (!usbController.ComPortOpen(serial_com_port) || !usbController.TransIotInit() || !usbController.NopCommand())
                 {
                     MessageBox.Show("Port Init is failed!");
                     this.UsbBtn.Enabled = true;
@@ -471,6 +473,30 @@ namespace test1
             sensor_info.Hide();
             MessageBox.Show("usbNewDataReceive");
             usbController.AllSenorData();
+        }
+
+        public string GetSerialPort()
+        {
+            var _port = "COM6";
+
+            var cmd = Program.m_dbConnection.CreateCommand();
+            string port_sql = "SELECT port FROM main_setting";
+            cmd.CommandText = port_sql;
+
+            var exist_status_reader = cmd.ExecuteReader();
+            try
+            {
+                if (exist_status_reader.Read())
+                {
+                    _port = exist_status_reader.GetString(0);
+                }
+            }
+            catch (System.Exception ex)
+            {
+                // MessageBox.Show(ex.ToString());
+            }
+
+            return _port;
         }
     }
 }

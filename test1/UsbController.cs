@@ -59,11 +59,11 @@ namespace test1
         private System.IO.Ports.StopBits _StopBits_IoT = System.IO.Ports.StopBits.One;
 
 
-        public bool ComPortOpen()
+        public bool ComPortOpen(string _Comport)
         {
             _IoTIF = new CommCdcDirect();
             ((CommCdcDirect)_IoTIF).PortName = "IoTデバイス";
-            ((CommCdcDirect)_IoTIF).ComPort = _ComPort_Iot;
+            ((CommCdcDirect)_IoTIF).ComPort = _Comport;
             ((CommCdcDirect)_IoTIF).BaudRate = _BaudRate_Iot;
             ((CommCdcDirect)_IoTIF).DataBits = _DataBits_IoT;
             ((CommCdcDirect)_IoTIF).ParityType = _Parity_IoT;
@@ -460,7 +460,7 @@ namespace test1
                     this.GettingDetailData(data_str);
                 };
             }
-            
+
             MessageBox.Show(result_infos);
         }
 
@@ -504,7 +504,6 @@ namespace test1
         {
             // MessageBox.Show(_uuid + ":" + data_id + ":" + temperature + ":" + humidity + ":" + voltage + ":"
             //                + pressure + ":" + gradient + ":" + sensor_time + ":" + date_time);
-
 
             try
             {
@@ -666,9 +665,7 @@ namespace test1
                 }
             }
             return macAddresses;
-        }
-
-
+        }        
 
         private const byte PC_COMMAND_HT03_DATA = (byte)0x01;
 
